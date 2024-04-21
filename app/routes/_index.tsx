@@ -14,13 +14,14 @@ import {
   thematicBreakPlugin,
   toolbarPlugin,
   MDXEditor,
-  DialogButton,
   insertDirective$,
   directivesPlugin,
 } from "@mdxeditor/editor";
 import { usePublisher } from "@mdxeditor/gurx";
-import { VideoDirectiveDescriptor } from "../../descriptors/video";
+import { VideoDirectiveDescriptor } from "../../mdx/video";
+import { AudioDirectiveDescriptor } from "../../mdx/audio";
 import { LeafDirective } from "mdast-util-directive";
+import { FileDialog } from "../../mdx/FileDialog";
 
 export async function expressImageUploadHandler(image: File) {
   const formData = new FormData();
@@ -39,18 +40,72 @@ This should be an youtube video:
 ::video{url="https://videos.pexels.com/video-files/5667416/5667416-sd_640_338_30fps.mp4"}
 `;
 
-const YouTubeButton = () => {
+const VideoButton = () => {
   const insertDirective = usePublisher(insertDirective$);
 
   return (
-    <DialogButton
-      tooltipTitle="Вставка видео"
-      submitButtonTitle="Вставить"
-      dialogInputPlaceholder="Вставьте ссылку на видео файл"
+    <FileDialog
+      uploadFileTitle={"Загрузите видео с вашего устройства"}
+      tooltipTitle="Загрузка файла"
+      submitButtonTitle="Загрузить"
+      dialogInputLabel="Или вставьте ссылку на видео файл"
       buttonContent="Видео"
-      onSubmit={(url) => {
+      acceptFileTypes={"*"} //video/*
+      onSubmit={async ({ url, file: fileList }) => {
+        if (fileList.length) {
+          const file = fileList.item(0)!;
+          const formData = new FormData();
+          formData.append("file", file);
+          const res = await fetch("http://127.0.0.1:8000/upload", {
+            method: "POST",
+            body: formData,
+            mode: "cors",
+          });
+          console.log("REQUEST SENT AND GOT RESPONSE");
+          const data = await res.json();
+          url = data.url;
+        }
+        console.log("URL", url);
+
         insertDirective({
           name: "video",
+          type: "leafDirective",
+
+          attributes: { url },
+          children: [],
+        } as LeafDirective);
+      }}
+    />
+  );
+};
+
+const AudioButton = () => {
+  const insertDirective = usePublisher(insertDirective$);
+
+  return (
+    <FileDialog
+      uploadFileTitle={"Загрузите аудио с вашего устройства"}
+      tooltipTitle="Загрузка файла"
+      submitButtonTitle="Загрузить"
+      dialogInputLabel="Или вставьте ссылку на аудио файл"
+      buttonContent="Аудио"
+      acceptFileTypes={"*"} //video/*
+      onSubmit={async ({ url, file: fileList }) => {
+        if (fileList.length) {
+          const file = fileList.item(0)!;
+          const formData = new FormData();
+          formData.append("file", file);
+          const res = await fetch("http://127.0.0.1:8000/upload", {
+            method: "POST",
+            body: formData,
+            mode: "cors",
+          });
+          const data = await res.json();
+          url = data.url;
+        }
+
+        insertDirective({
+          name: "audio",
           type: "leafDirective",
 
           attributes: { url },
@@ -65,7 +120,8 @@ export const ALL_PLUGINS = [
   toolbarPlugin({
     toolbarContents: () => (
       <>
-        <YouTubeButton />
+        <VideoButton />
+        <AudioButton />
       </>
     ),
   }),
@@ -85,7 +141,9 @@ export const ALL_PLUGINS = [
   tablePlugin(),
   thematicBreakPlugin(),
   markdownShortcutPlugin(),
-  directivesPlugin({ directiveDescriptors: [VideoDirectiveDescriptor] }),
+  directivesPlugin({
+    directiveDescriptors: [VideoDirectiveDescriptor, AudioDirectiveDescriptor],
+  }),
 ];
 
 export const meta: MetaFunction = () => {

@@ -1,3 +1,2 @@
-import { VideoDirectiveDescriptor } from "./VideoDescriptor";
+export { VideoDirectiveDescriptor } from "./VideoDescriptor";
 
-export { VideoDirectiveDescriptor };

@@ -509,6 +509,7 @@
   display: flex;
   align-items: center;
   background-color: var(--baseBase);
+  flex-direction: column;
 
   border-radius: var(--radius-base);
   border: 1px solid var(--baseBorder);

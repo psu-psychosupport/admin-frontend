@@ -1,36 +1,21 @@
-# Welcome to Remix + Vite!
+# Задачи
 
-📖 See the [Remix docs](https://remix.run/docs) and the [Remix Vite docs](https://remix.run/docs/en/main/future/vite) for details on supported features.
+## Основная админка
 
-## Development
+- [ ] CRUD
+- - [ ] Пользователи
+- - [ ] Разделы
+- - [ ] Темы разделов
+- - [ ] Информационный контент
 
-Run the Vite dev server:
+## Редактор текста
 
-```shellscript
-npm run dev
-```
+Текст, таблица и изображение уже включено
 
-## Deployment
-
-First, build your app for production:
-
-```sh
-npm run build
-```
-
-Then run the app in production mode:
-
-```sh
-npm start
-```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-- `build/server`
-- `build/client`
+- [x] Видео
+- [x] Аудио
+- [x] Памятки (PDF)
+- [ ] Диаграммы
+- [ ] Презентации
+- [ ] Опросы
+- [ ] Пользователи
