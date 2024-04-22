@@ -35,16 +35,7 @@ const VideoDirectiveDescriptor: DirectiveDescriptor<VideoDirectiveNode> = {
         >
           delete
         </button>
-        <button
-          onClick={() => {
-            parentEditor.update(() => {
-              lexicalNode.selectNext();
-              lexicalNode.remove();
-            });
-          }}
-        >
-          edit
-        </button>
+
         <video
           width={mdastNode.attributes?.width || "560"}
           height={mdastNode.attributes?.height || "315"}
