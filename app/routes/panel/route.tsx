@@ -15,6 +15,17 @@ import {
   Tbody,
   Heading,
 } from "@chakra-ui/react";
+import {EditIcon} from "@chakra-ui/icons";
+
+const data = [
+  {
+    id: 1,
+    name: 'Батуев Данил',
+    email: 'damego@vk.com',
+    isVerified: 'true',
+    permissions: 'ADMINISTRATOR' // todo: format from int
+  }
+]
 
 export const meta: MetaFunction = () => {
   return [{ title: "Панель управления" }];
@@ -40,12 +51,12 @@ const NavigationContainer = () => {
 const InfoTable = () => {
   return (
     <TableContainer>
-      <Box alignSelf={"flex-start"} marginBottom={'2%'} direction={'row'}>
+      <Stack justify={'space-between'} marginBottom={'2%'} direction={'row'}>
         <Heading as={"h6"}>
           Пользователи
         </Heading>
-        <Button colorScheme={'messenger'} alignSelf={'self-end'}>Добавить</Button>
-      </Box>
+        <Button colorScheme={'messenger'} alignSelf={'flex-end'}>Добавить</Button>
+      </Stack>
       <Table size={"lg"}>
         <Thead>
           <Tr>
@@ -58,14 +69,16 @@ const InfoTable = () => {
           </Tr>
         </Thead>
         <Tbody>
-          <Tr>
-            <Td>1</Td>
-            <Td>Батуев Данил</Td>
-            <Td>damego@vk.com</Td>
-            <Td>Да</Td>
-            <Td>ADMINISTRATOR</Td>
-            <Td>[X]</Td>
-          </Tr>
+            {data.map((item) => (
+              <Tr key={item.id}>
+                <Td>{item.id}</Td>
+                <Td>{item.name}</Td>
+                <Td>{item.email}</Td>
+                <Td>{item.isVerified}</Td>
+                <Td>{item.permissions}</Td>
+                <Td><EditIcon /></Td>
+              </Tr>
+              ))}
         </Tbody>
       </Table>
     </TableContainer>
