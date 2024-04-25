@@ -12,6 +12,7 @@ import {
 import { MetaFunction, LinksFunction } from "@remix-run/node"; // Depends on the runtime you choose
 
 import { ServerStyleContext, ClientStyleContext } from "./context";
+import Header from "../components/Header";
 
 export const meta: MetaFunction = () => [
   {
@@ -69,6 +70,7 @@ const Document = withEmotionCache(
           ))}
         </head>
         <body>
+          <Header />
           {children}
           <ScrollRestoration />
           <Scripts />
