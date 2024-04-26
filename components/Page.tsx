@@ -1,29 +1,20 @@
-import { Flex, Stack } from "@chakra-ui/react";
+import { Box, Stack } from "@mui/material";
 import React from "react";
 import Menu from "./Menu";
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { validateModelName } from "../utils/validators";
-import { useLoaderData } from "@remix-run/react";
 
-export async function loader({ params }: LoaderFunctionArgs) {
-  if (!validateModelName(params.model as string)) {
-    throw new Response(null, {
-      status: 404,
-      statusText: "Похоже на то, что вы не туда зашли.",
-    });
-  }
-  return params.model as string;
-}
-
-const Page = ({ children }: { children: React.ReactNode }) => {
-  const route = useLoaderData<typeof loader>();
-
+const Page = ({
+  route,
+  children,
+}: {
+  route: string;
+  children: React.ReactNode;
+}) => {
   return (
-    <Stack direction={"row"} padding={"2%"}>
-      <Flex flex={1}>
+    <Stack direction={"row"} padding={"2%"} spacing={'10%'}>
+      <Box>
         <Menu currentRoute={route} />
-      </Flex>
-      <Flex flex={3}>{children}</Flex>
+      </Box>
+      <Box>{children}</Box>
     </Stack>
   );
 };

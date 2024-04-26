@@ -1,8 +1,8 @@
 import type { MetaFunction } from "@remix-run/node";
 import React from "react";
 import Page from "../../components/Page";
-import { Text } from "@chakra-ui/react";
-import {Outlet} from "@remix-run/react";
+import { Typography } from "@mui/material";
+import { Outlet } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Панель управления" }];
@@ -11,7 +11,7 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   return (
     <Page>
-      <Text>abobus</Text>
+      <Typography>abobus</Typography>
       <Outlet />
     </Page>
   );

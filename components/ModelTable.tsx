@@ -1,60 +1,72 @@
 import {
-  Button,
-  Heading,
-  Stack,
   Table,
+  TableBody,
+  TableCell,
   TableContainer,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/react";
-import { EditIcon } from "@chakra-ui/icons";
+  TableHead,
+  TableRow,
+  Button,
+  Stack,
+  Typography,
+  IconButton,
+} from "@mui/material";
+
+import { Edit as EditIcon } from "@mui/icons-material";
+
 import React from "react";
 import { redirect } from "@remix-run/node";
 
-const ModelTable = <T,>({ data, model }: { data: T[]; model: string }) => {
+export default function ModelTable<T>({
+  data,
+  model,
+}: {
+  data: T[];
+  model: string;
+}) {
   const entries = data.map(Object.entries);
 
   return (
     <TableContainer>
-      <Stack justify={"space-between"} marginBottom={"2%"} direction={"row"}>
-        <Heading as={"h6"}>Пользователи</Heading>
+      <Stack
+        justifyContent={'space-between'}
+        sx={{marginBottom: "2%" }}
+        direction={"row"}
+      >
+        <Typography variant={"h6"}>Пользователи</Typography>
         <Button
-          colorScheme={"messenger"}
-          alignSelf={"flex-end"}
+          variant={"contained"}
+          sx={{ alignSelf: "flex-end" }}
           onClick={() => redirect(`/panel/create/${model}`)}
         >
           Добавить
         </Button>
       </Stack>
-      <Table size={"lg"} borderWidth={"1px"} borderRadius={"6"}>
-        <Thead>
-          <Tr>
-            <Th>Id</Th>
-            <Th>Имя</Th>
-            <Th>Почта</Th>
-            <Th>Подтверждён</Th>
-            <Th>Разрешения</Th>
-            <Th></Th>
-          </Tr>
-        </Thead>
-        <Tbody>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Id</TableCell>
+            <TableCell>Имя</TableCell>
+            <TableCell>Почта</TableCell>
+            <TableCell>Подтверждён</TableCell>
+            <TableCell>Разрешения</TableCell>
+            <TableCell></TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {entries.map((item) => (
-            <Tr key={item.id}>
+            <TableRow key={item.id}>
               {item.map(([key, value]) => (
-                <Td key={key}>{value}</Td>
+                <TableCell key={key}>{value}</TableCell>
               ))}
-              <Td>
-                <EditIcon />
-              </Td>
-            </Tr>
+              <TableCell>
+                <IconButton>
+                  <EditIcon />
+                </IconButton>
+              </TableCell>
+            </TableRow>
           ))}
-        </Tbody>
+        </TableBody>
       </Table>
     </TableContainer>
   );
-};
-
-export default ModelTable;
+}

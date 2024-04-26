@@ -1,22 +1,25 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Typography } from "@mui/material";
 import { Link } from "@remix-run/react";
 import React from "react";
 
 const Header = () => {
   return (
-    <Flex
-      // as={"nav"}
-      h={"72px"}
-      align={"center"}
-      justify={"end"}
+    <Box
+      height={"72px"}
+      sx={{
+        display: "flex",
+        justifyContent: "flex-end",
+      }}
     >
-      {/* Heading component has incorrect styles, so we can't use them lmao */}
-      <Link to={""} style={{ padding: "2%" }}>
-        <Text fontSize={"20px"} fontWeight={"500"}>
-          Основной сайт
-        </Text>
+      <Link
+        to={""}
+        style={{ padding: "1%", textDecoration: "none", color: "inherit" }}
+      >
+        <Typography variant={"h6"} sx={{ justifySelf: "end" }} >
+          Основной сайт{" "}
+        </Typography>
       </Link>
-    </Flex>
+    </Box>
   );
 };
 

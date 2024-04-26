@@ -1,7 +1,7 @@
-import { LoaderFunctionArgs, MetaFunction, redirect } from "@remix-run/node";
+import { json, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import React from "react";
 
-import { User } from "../../types/users";
+import { User } from "../../api/types/users";
 import { useLoaderData } from "@remix-run/react";
 import ModelTable from "../../components/ModelTable";
 import Page from "../../components/Page";
@@ -35,14 +35,17 @@ export async function loader({ params }: LoaderFunctionArgs) {
       statusText: "Похоже на то, что вы не туда зашли.",
     });
   }
-  return params.model as string;
+  return json({
+    model: params.model as string,
+    data,
+  });
 }
 
 export default function Index() {
-  const model = useLoaderData<typeof loader>();
+  const { model, data } = useLoaderData<typeof loader>();
 
   return (
-    <Page>
+    <Page route={model}>
       <ModelTable model={model} data={data} />
     </Page>
   );
