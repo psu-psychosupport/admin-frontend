@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import {Box, colors, Typography} from "@mui/material";
 import { Link } from "@remix-run/react";
 import React from "react";
 
@@ -9,6 +9,8 @@ const Header = () => {
       sx={{
         display: "flex",
         justifyContent: "flex-end",
+        borderBottom: 2,
+        borderColor: colors.grey[200]
       }}
     >
       <Link

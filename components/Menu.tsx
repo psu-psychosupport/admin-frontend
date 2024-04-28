@@ -1,74 +1,105 @@
-import { Box, Stack, Typography, Container } from "@mui/material";
+import { Box, Stack, Typography, Container, colors } from "@mui/material";
 import { Link } from "@remix-run/react";
 import React from "react";
+import {
+  PostAdd as PostAddIcon,
+  Category as CategoryIcon,
+  AccountTree as AccountTreeIcon,
+  Quiz as QuizIcon,
+  Source as SourceIcon,
+  People as PeopleIcon,
+} from "@mui/icons-material";
 
 interface IRoute {
   name: string;
   href: string;
   locale: string;
+  icon: React.ReactNode;
 }
 
 const routes: IRoute[] = [
   {
     name: "posts",
-    href: "/panel/posts",
+    href: "/posts/list",
     locale: "Посты",
+    icon: <PostAddIcon />,
   },
   {
     name: "categories",
-    href: "/panel/categories",
+    href: "/categories/list",
     locale: "Категории",
+    icon: <CategoryIcon />,
   },
   {
     name: "diagrams",
-    href: "/panel/diagrams",
+    href: "/diagrams/list",
     locale: "Схемы",
+    icon: <AccountTreeIcon />,
   },
   {
     name: "tests",
-    href: "/panel/tests",
+    href: "/tests/list",
     locale: "Тесты",
+    icon: <QuizIcon />,
   },
   {
     name: "files",
-    href: "/panel/files",
+    href: "/files/list",
     locale: "Загруженные файлы",
+    icon: <SourceIcon />,
   },
   {
     name: "users",
-    href: "/panel/users",
+    href: "/users/list",
     locale: "Пользователи",
+    icon: <PeopleIcon />,
   },
 ];
 
 const Menu = ({ currentRoute }: { currentRoute?: string }) => {
-  console.log(currentRoute);
   return (
     <Container fixed>
-      <Stack>
+      <Stack spacing={2}>
         {routes.map((route) => (
           <Box
             sx={{
               backgroundColor:
                 currentRoute && currentRoute === route.name
-                  ? "#9c9c9c"
+                  ? colors.grey[200]
                   : undefined,
               borderRadius:
                 currentRoute && currentRoute === route.name ? "6px" : undefined,
+              color:
+                currentRoute && currentRoute === route.name
+                  ? "#000000"
+                  : colors.grey[700],
             }}
             key={route.name}
           >
             <Link
-              to={route.href}
-              style={{ textDecoration: "none", color: "inherit" }}
+              to={{ pathname: route.href }}
+              style={{
+                textDecoration: "none",
+                color: "inherit",
+              }}
             >
-              <Typography
-                sx={{ margin: "6px" }}
-                fontWeight={500}
-                fontSize={"large"}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  margin: "6px",
+                }}
               >
-                {route.locale}
-              </Typography>
+                {route.icon}
+                <Typography
+                  fontWeight={500}
+                  fontSize={"large"}
+                  marginLeft={"10px"}
+                >
+                  {route.locale}
+                </Typography>
+              </div>
             </Link>
           </Box>
         ))}

@@ -4,7 +4,7 @@ import { FileDialog } from "../../mdx/FileDialog";
 import { LeafDirective } from "mdast-util-directive";
 import React from "react";
 
-import {uploadFile} from "../../utils/uploadFile";
+import { apiService } from "../../api/apiService";
 
 const AudioButton = () => {
   const insertDirective = usePublisher(insertDirective$);
@@ -18,7 +18,9 @@ const AudioButton = () => {
       buttonContent="Аудио"
       acceptFileTypes={"audio/*"}
       onSubmit={async ({ url, file: fileList }) => {
-        url = fileList.length ? await uploadFile(fileList) : url;
+        url = fileList.length
+          ? await apiService.uploadFile(fileList.item(0)!)
+          : url;
 
         insertDirective({
           name: "audio",

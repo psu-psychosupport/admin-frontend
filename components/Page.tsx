@@ -6,11 +6,15 @@ const Page = ({
   route,
   children,
 }: {
-  route: string;
+  route?: string;
   children: React.ReactNode;
 }) => {
   return (
-    <Stack direction={"row"} padding={"2%"} spacing={'10%'}>
+    <Stack
+      direction={"row"}
+      spacing={"10%"}
+      sx={{ marginTop: "10%" }}
+    >
       <Box>
         <Menu currentRoute={route} />
       </Box>

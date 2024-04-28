@@ -1,17 +1,16 @@
 import type { MetaFunction } from "@remix-run/node";
 import React from "react";
-import Page from "../../components/Page";
-import { Typography } from "@mui/material";
+
 import { Outlet } from "@remix-run/react";
+import Page from "../../components/Page";
 
 export const meta: MetaFunction = () => {
-  return [{ title: "Панель управления" }];
+  return [{ title: "Категории" }];
 };
 
-export default function Index() {
+export default function CategoriesLayout() {
   return (
     <Page>
-      <Typography>abobus</Typography>
       <Outlet />
     </Page>
   );

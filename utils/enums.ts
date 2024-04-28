@@ -6,3 +6,4 @@ export const decomposeFlag = (flag: number) => {
     .map((x, i) => (x === "1" ? Math.pow(2, i) : 0))
     .filter(Boolean);
 };
+
