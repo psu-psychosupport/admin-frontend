@@ -13,20 +13,14 @@ import {
 import { SelectChangeEvent } from "@mui/material/Select";
 import Editor from "../../components/Editor";
 
-import { IPost } from "../../api/types/content";
+import {ICategory, IPost } from "../../api/types/content";
 import { apiService } from "../../api/apiService";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import {IFormPost} from "./types";
 
-export async function loader() {
-  console.log("loader");
-  const categories = await apiService.getCategories();
-  return json(categories);
-}
 
-export default function PostForm({ post }: { post?: IPost }) {
-  const categories = useLoaderData<typeof loader>();
-
+export default function PostForm({categories, post, onSubmit }: {categories: ICategory[]; post?: IPost; onSubmit: (post: IFormPost) => void; }) {
   const [category, setCategory] = useState("");
   const [content, setContent] = useState<string>(post?.content || "");
 
@@ -45,7 +39,7 @@ export default function PostForm({ post }: { post?: IPost }) {
           label="Категоия"
           onChange={handleChange}
         >
-          {categories.map((category) => (
+          {categories && categories.map((category) => (
             <MenuItem value={category.id} key={category.id}>
               {category.name}
             </MenuItem>
@@ -65,7 +59,6 @@ export default function PostForm({ post }: { post?: IPost }) {
           </Box>
         )}
       </ClientOnly>
-      );
     </Box>
   );
 }

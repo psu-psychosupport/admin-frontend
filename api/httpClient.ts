@@ -26,7 +26,6 @@ export default class HttpClient {
   private refreshToken: string;
 
   constructor() {
-    console.log(process.env);
     this.client = axios.create({
       baseURL: LOCAL_URL,
     });
