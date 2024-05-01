@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
 
 export default function CategoriesLayout() {
   return (
-    <Page>
+    <Page route={"categories"}>
       <Outlet />
     </Page>
   );

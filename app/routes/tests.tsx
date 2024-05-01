@@ -9,7 +9,7 @@ export const meta: MetaFunction = () => {
 
 export default function TestsLayout() {
   return (
-    <Page>
+    <Page route={"tests"}>
       <Outlet />
     </Page>
   );

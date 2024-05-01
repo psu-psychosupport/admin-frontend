@@ -9,7 +9,7 @@ export const meta: MetaFunction = () => {
 
 export default function MediaFilesLayout() {
   return (
-    <Page>
+    <Page route={"files"}>
       <Outlet />
     </Page>
   );
