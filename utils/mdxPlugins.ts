@@ -15,6 +15,8 @@ import EditorToolbar from "../components/toolbar/EditorToolbar";
 import { VideoDirectiveDescriptor } from "../mdx/video";
 import { AudioDirectiveDescriptor } from "../mdx/audio";
 import { apiService } from "../api/apiService";
+import { DiagramDirectiveDescriptor } from "../mdx/diagram";
+import { PdfDirectiveDescriptor } from "../mdx/pdf";
 
 export const mdxPlugins = [
   toolbarPlugin({
@@ -32,6 +34,11 @@ export const mdxPlugins = [
   thematicBreakPlugin(),
   markdownShortcutPlugin(),
   directivesPlugin({
-    directiveDescriptors: [VideoDirectiveDescriptor, AudioDirectiveDescriptor],
+    directiveDescriptors: [
+      VideoDirectiveDescriptor,
+      AudioDirectiveDescriptor,
+      DiagramDirectiveDescriptor,
+      PdfDirectiveDescriptor,
+    ],
   }),
 ];

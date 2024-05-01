@@ -20,6 +20,7 @@ import {
 
 import AudioButton from "./AudioButton";
 import VideoButton from "./VideoButton";
+import DiagramButton from "./DiagramButton";
 
 function whenInAdmonition(editorInFocus: EditorInFocus | null) {
   const node = editorInFocus?.rootNode;
@@ -64,6 +65,7 @@ const EditorToolbar = () => {
                 <InsertImage />
                 <AudioButton />
                 <VideoButton />
+                <DiagramButton />
 
                 <Separator />
 

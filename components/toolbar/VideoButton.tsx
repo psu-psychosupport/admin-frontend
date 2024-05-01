@@ -3,6 +3,7 @@ import { insertDirective$ } from "@mdxeditor/editor";
 import { FileDialog } from "../../mdx/FileDialog";
 import { LeafDirective } from "mdast-util-directive";
 import React from "react";
+import { PlayCircle as PlayCircleIcon } from "@mui/icons-material";
 
 import { apiService } from "../../api/apiService";
 
@@ -12,10 +13,10 @@ const VideoButton = () => {
   return (
     <FileDialog
       uploadFileTitle={"Загрузите видео с вашего устройства"}
-      tooltipTitle="Загрузка файла"
+      tooltipTitle="Видео"
       submitButtonTitle="Загрузить"
       dialogInputLabel="Или вставьте ссылку на видео файл"
-      buttonContent="Видео"
+      buttonContent={<PlayCircleIcon />}
       acceptFileTypes={"video/*"}
       onSubmit={async ({ url, file: fileList }) => {
         url = fileList.length

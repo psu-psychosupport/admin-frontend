@@ -1,0 +1,1 @@
+export { PdfDirectiveDescriptor } from "./EmbedDescriptor";

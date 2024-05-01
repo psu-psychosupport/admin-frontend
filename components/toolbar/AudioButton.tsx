@@ -3,6 +3,7 @@ import { insertDirective$ } from "@mdxeditor/editor";
 import { FileDialog } from "../../mdx/FileDialog";
 import { LeafDirective } from "mdast-util-directive";
 import React from "react";
+import { Audiotrack as AudiotrackIcon } from "@mui/icons-material";
 
 import { apiService } from "../../api/apiService";
 
@@ -12,10 +13,10 @@ const AudioButton = () => {
   return (
     <FileDialog
       uploadFileTitle={"Загрузите аудио с вашего устройства"}
-      tooltipTitle="Загрузка файла"
+      tooltipTitle="Аудио"
       submitButtonTitle="Загрузить"
       dialogInputLabel="Или вставьте ссылку на аудио файл"
-      buttonContent="Аудио"
+      buttonContent={<AudiotrackIcon />}
       acceptFileTypes={"audio/*"}
       onSubmit={async ({ url, file: fileList }) => {
         url = fileList.length

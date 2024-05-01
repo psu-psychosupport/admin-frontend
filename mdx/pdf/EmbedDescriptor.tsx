@@ -3,15 +3,15 @@ import { DirectiveDescriptor } from "@mdxeditor/editor";
 import React from "react";
 
 interface EmbedDirectiveNode extends LeafDirective {
-  name: "embed";
+  name: "pdf";
   attributes: { url: string };
 }
 
-const EmbedDirectiveDescriptor: DirectiveDescriptor<EmbedDirectiveNode> = {
-  name: "embed",
+const PdfDirectiveDescriptor: DirectiveDescriptor<EmbedDirectiveNode> = {
+  name: "pdf",
   type: "leafDirective",
   testNode(node) {
-    return node.name === "embed";
+    return node.name === "pdf";
   },
   attributes: ["url"],
   hasChildren: false,
@@ -40,4 +40,4 @@ const EmbedDirectiveDescriptor: DirectiveDescriptor<EmbedDirectiveNode> = {
   },
 };
 
-export { EmbedDirectiveDescriptor };
+export { PdfDirectiveDescriptor };
