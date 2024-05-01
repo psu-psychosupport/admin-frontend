@@ -8,9 +8,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import ModelTable from "../../components/ModelTable";
 import React from "react";
 import { apiService } from "../../api/apiService";
+import { useNavigate } from "@remix-run/react";
 
 const validationSchema = yup.object({
   email: yup
@@ -24,11 +24,22 @@ const validationSchema = yup.object({
 });
 
 export default function SignInRoute() {
-  const onSubmit = async ({ email, password }) => {
+  const navigate = useNavigate();
+  const onSubmit = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
     const error = await apiService.signIn(email, password);
+    console.log(error);
     if (error) {
       await formik.setTouched({ email: true }, false);
       formik.setErrors({ email: error });
+    } else {
+      console.log("[AUTH] Authorized");
+      navigate("/categories/list");
     }
   };
 
@@ -42,7 +53,9 @@ export default function SignInRoute() {
   });
 
   return (
-    <Container sx={{ display: "flex", justifyContent: "center", alignItems: 'center' }}>
+    <Container
+      sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+    >
       <Box sx={{ width: "30vw" }}>
         <Typography variant={"h4"} fontWeight={"800"} sx={{ marginBottom: 2 }}>
           Вход в админ панель
