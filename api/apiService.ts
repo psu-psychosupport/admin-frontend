@@ -2,7 +2,7 @@ import HttpClient from "./httpClient";
 import {
   ICategoryForm,
   ICreateCategory,
-  ICreatePost,
+  ICreatePost, ICreateSubCategory,
   IUpdateCategory,
   IUpdatePost,
   IUserForm,
@@ -25,6 +25,10 @@ class ApiService {
 
   getUser(userId: number) {
     return this.http.getUser(userId);
+  }
+
+  getMe() {
+    return this.http.getMe()
   }
 
   createUser(user: IUserForm) {
@@ -60,23 +64,23 @@ class ApiService {
   }
 
   getSubcategories() {
-    return this.http.getCategories();
+    return this.http.getSubCategories();
   }
 
-  getSubcategory(categoryId: number) {
-    return this.http.getCategory(categoryId);
+  getSubcategory(subcategoryId: number) {
+    return this.http.getSubcategory(subcategoryId);
   }
 
-  createSubcategory(category: ICreateCategory) {
-    return this.http.createCategory(category);
+  createSubcategory(subcategory: ICreateSubCategory) {
+    return this.http.createSubcategory(subcategory);
   }
 
-  updateSubcategory(categoryId: number, category: IUpdateCategory) {
-    return this.http.updateCategory(categoryId, category);
+  updateSubcategory(subcategory: number, subcategoryUpdate: IUpdateCategory) {
+    return this.http.updateSubcategory(subcategory, subcategoryUpdate);
   }
 
-  deleteSubcategory(categoryId: number) {
-    return this.http.deleteCategory(categoryId);
+  deleteSubcategory(subcategoryId: number) {
+    return this.http.deleteSubcategory(subcategoryId);
   }
 
   getPosts() {
@@ -100,7 +104,7 @@ class ApiService {
   }
 
   uploadFile(file: File): Promise<string> {
-    return this.http.uploadFile(file);
+    return this.http.uploadMediaFile(file);
   }
 }
 

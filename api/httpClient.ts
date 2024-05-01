@@ -1,5 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
-import * as process from "node:process";
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { ICategory, IPost, ISubCategory } from "./types/content";
 import { IUser } from "./types/users";
 import {
@@ -7,30 +6,34 @@ import {
   ICreatePost,
   ICreateSubCategory,
   IUpdateCategory,
-  IUpdatePost,
+  IUpdatePost, IUpdateSubCategory,
   IUserForm,
 } from "../components/modelForms/types";
 
 const LOCAL_URL = "http://127.0.0.1:8000";
 
-export interface HttpError {
+export class HttpError {
   status: number;
-  detail: string;
-}
+  message: string;
 
-class UnauthorizedError {}
+  constructor(status: number, message: string) {
+    this.status = status;
+    this.message = message;
+  }
+}
 
 export default class HttpClient {
   private client: AxiosInstance;
-  private accessToken: string;
-  private refreshToken: string;
+  private accessToken: string | null;
+  private refreshToken: string | null;
 
   constructor() {
     this.client = axios.create({
       baseURL: LOCAL_URL,
+      withCredentials: true,
     });
-    this.accessToken = "";
-    this.refreshToken = "";
+    this.accessToken = null;
+    this.refreshToken = null;
   }
 
   async request(
@@ -49,7 +52,7 @@ export default class HttpClient {
     } else {
       payload = data;
     }
-
+    const token = this.accessToken || this.refreshToken;
     let response: AxiosResponse;
 
     for (let i = 0; i < 2; i += 1) {
@@ -58,36 +61,37 @@ export default class HttpClient {
         const response = await this.client.request({
           method: "POST",
           url: "/refresh",
-          headers: {
-            Authorization: `Bearer ${this.refreshToken}`,
-          },
+          headers: token
+            ? {
+                Authorization: `Bearer ${token}`,
+              }
+            : undefined,
         });
-
-        if (response.status === 401) {
-          throw new UnauthorizedError();
+        if (response.status === 200) {
+          this.accessToken = response.data.accessToken;
+          return await this.request(method, endpoint, { data, file });
         }
-
-        for (const cookie in response.headers["set-cookie"]) {
-          if (cookie.startsWith("access_token")) {
-            this.accessToken = cookie.replace("access_token=", "");
-            break;
-          }
-        }
-        return;
       }
 
-      response = await this.client.request({
-        method,
-        url: endpoint,
-        data: payload,
-        headers: {
-          Authorization: `Bearer ${this.accessToken}`,
-        },
-      });
-
-      if (response.status === 401 && this.refreshToken) {
-        continue;
+      try {
+        response = await this.client.request({
+          method,
+          url: endpoint,
+          data: payload,
+          headers: token
+            ? {
+                Authorization: `Bearer ${token}`,
+              }
+            : undefined,
+        });
+      } catch (error: AxiosError<any, any>) {
+        if (error.response.status === 401 && this.refreshToken) {
+          continue;
+        }
+        console.log("[ERROR]", error.response.status, error.response.data)
+        throw new HttpError(error.response.status, error.response.data.detail);
       }
+      console.log("[DATA]", response.data)
       return response.data;
       // if (response!.status === 200) {
       //   return response!.data;
@@ -107,6 +111,8 @@ export default class HttpClient {
     }
     this.accessToken = data.accessToken;
     this.refreshToken = data.refreshToken;
+
+
   }
 
   getUsers(): Promise<IUser[]> {
@@ -115,6 +121,10 @@ export default class HttpClient {
 
   getUser(userId: number): Promise<IUser> {
     return this.request("GET", `/users/${userId}`);
+  }
+
+  getMe(): Promise<IUser> {
+    return this.request("GET", "/users/me");
   }
 
   createUser(user: IUserForm) {
@@ -150,15 +160,15 @@ export default class HttpClient {
   }
 
   deleteCategory(categoryId: number) {
-    return this.request("POST", `/categories/${categoryId}`);
+    return this.request("DELETE", `/categories/${categoryId}`);
   }
 
   getSubCategories(): Promise<ISubCategory[]> {
     return this.request("GET", "/subcategories");
   }
 
-  getSubcategory(categoryId: number): Promise<ICategory> {
-    return this.request("GET", `/categories/${categoryId}`);
+  getSubcategory(subcategoryId: number): Promise<ICategory> {
+    return this.request("GET", `/subcategories/${subcategoryId}`);
   }
 
   createSubcategory(subcategory: ICreateSubCategory) {
@@ -167,14 +177,14 @@ export default class HttpClient {
     });
   }
 
-  updateSubcategory(categoryId: number, category: IUpdateCategory) {
-    return this.request("PATCH", `/categories/${categoryId}`, {
-      data: category,
+  updateSubcategory(subcategoryId: number, categoryUpdate: IUpdateSubCategory) {
+    return this.request("PATCH", `/subcategories/${subcategoryId}`, {
+      data: categoryUpdate,
     });
   }
 
-  deleteSubcategory(categoryId: number) {
-    return this.request("POST", `/categories/${categoryId}`);
+  deleteSubcategory(subcategoryId: number) {
+    return this.request("DELETE", `/subcategories/${subcategoryId}`);
   }
 
   getPosts(): Promise<IPost[]> {
@@ -197,7 +207,7 @@ export default class HttpClient {
     return this.request("DELETE", `/posts/${postId}`);
   }
 
-  uploadFile(file: File): Promise<string> {
-    return this.request("POST", "/upload", { file });
+  uploadMediaFile(file: File): Promise<string> {
+    return this.request("POST", "/media", { file });
   }
 }
