@@ -1,25 +1,59 @@
-import { Box, Button, Typography, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Stack,
+  TextField,
+  IconButton,
+} from "@mui/material";
 import { useFormik } from "formik";
 import React from "react";
 import * as yup from "yup";
-import { ICategory } from "../../api/types/content";
-import ModelTable from "../ModelTable";
 import { ICategoryForm } from "./types";
+import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 
 const validationSchema = yup.object({
   name: yup.string().required("Это поле обязательно к заполнению"),
 });
 
+const Subcategory = ({
+  name,
+  onChange,
+  onDelete,
+}: {
+  name: string;
+  onChange: (name: string) => void;
+  onDelete: () => void;
+}) => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+      }}
+    >
+      <TextField
+        label={"Название подкатегории"}
+        fullWidth
+        value={name}
+        onChange={(event) => onChange(event.target.value)}
+      />
+      <IconButton onClick={onDelete}>
+        <DeleteIcon />
+      </IconButton>
+    </Box>
+  );
+};
+
 const CategoryForm = ({
-  category,
   onSubmit,
 }: {
-  category?: ICategory;
   onSubmit: (payload: ICategoryForm) => void;
 }) => {
-  const formik = useFormik({
+  const formik = useFormik<ICategoryForm>({
     initialValues: {
-      name: category?.name || "",
+      name: "",
       subcategories: [],
     },
     validationSchema,
@@ -27,9 +61,9 @@ const CategoryForm = ({
   });
 
   return (
-    <Box sx={{ width: "30vw" }}>
+    <Box sx={{ width: "50vw" }}>
       <Typography variant={"h4"} fontWeight={"800"} sx={{ marginBottom: 2 }}>
-        {category ? "Редактирование" : "Создание"} категории
+        Создание категории
       </Typography>
       <form onSubmit={formik.handleSubmit}>
         <Stack spacing={2}>
@@ -47,13 +81,35 @@ const CategoryForm = ({
             Подкатегории
           </Typography>
 
-          <ModelTable
-            showHeader={false}
-            columnTitles={["Id", "Название"]}
-            columnKeys={["id", "name"]}
-            data={formik.values.subcategories}
-            onRequestEdit={() => {}}
-          />
+          {formik.values.subcategories.map((subcategory, index) => (
+            <Subcategory
+              key={index}
+              name={subcategory}
+              onChange={(name) => {
+                const subcategories = [...formik.values.subcategories];
+                subcategories[index] = name;
+                formik.setValues({ ...formik.values, subcategories });
+              }}
+              onDelete={() => {
+                const subcategories = formik.values.subcategories.filter(
+                  ($, $index) => $index !== index,
+                );
+                formik.setValues({ ...formik.values, subcategories });
+              }}
+            />
+          ))}
+          <Button
+            startIcon={<AddIcon />}
+            variant={"outlined"}
+            onClick={() =>
+              formik.setValues({
+                ...formik.values,
+                subcategories: [...formik.values.subcategories, ""],
+              })
+            }
+          >
+            Добавить подкатегорию
+          </Button>
 
           <Button
             sx={{ marginTop: 4 }}
@@ -61,7 +117,7 @@ const CategoryForm = ({
             variant={"contained"}
             type="submit"
           >
-            {category ? "Обновить" : "Добавить"}
+            Сохранить
           </Button>
         </Stack>
       </form>

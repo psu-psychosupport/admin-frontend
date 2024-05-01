@@ -11,11 +11,11 @@ import {
   IconButton,
   Container,
 } from "@mui/material";
-import { Edit as EditIcon } from "@mui/icons-material";
+import {Add as AddIcon, Edit as EditIcon} from "@mui/icons-material";
 import React from "react";
 import {useNavigate} from "@remix-run/react";
 
-const TableHeader = ({ title, route }: { title: string; route: string }) => {
+export const TableHeader = ({ title, route }: { title: string; route: string }) => {
   const navigate = useNavigate();
 
   return (
@@ -32,6 +32,7 @@ const TableHeader = ({ title, route }: { title: string; route: string }) => {
         color={"primary"}
         sx={{ alignSelf: "flex-end" }}
         onClick={() => navigate(`/${route}/add`)}
+        startIcon={<AddIcon />}
       >
         Добавить
       </Button>
@@ -39,7 +40,7 @@ const TableHeader = ({ title, route }: { title: string; route: string }) => {
   );
 };
 
-export default function ModelTable<T extends object>({
+export default function ZModelTable<T extends object>({
   columnTitles,
   columnKeys,
   data,

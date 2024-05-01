@@ -1,9 +1,11 @@
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import React from "react";
 
 import { apiService } from "../../api/apiService";
 import { useLoaderData } from "@remix-run/react";
-import ModelTable from "../../components/ModelTable";
+import { Container, Stack } from "@mui/material";
+import { TableHeader } from "../../components/ModelTable";
+import { CategoryItem } from "~/components/CategoryItem";
 
 export async function loader() {
   const categories = await apiService.getCategories();
@@ -14,19 +16,13 @@ export default function CategoriesAddRoute() {
   const categories = useLoaderData<typeof loader>();
 
   return (
-    <ModelTable
-      showHeader
-      headerRoute={"categories"}
-      headerTitle={"Категории"}
-      columnTitles={columnTitles}
-      columnKeys={columnKeys}
-      data={categories}
-      onRequestEdit={(category) => {
-        redirect(`/categories/${category.id}`);
-      }}
-    />
+    <Container sx={{ width: "50vw" }} maxWidth={"lg"}>
+      <TableHeader route={"categories"} title={"Категории"} />
+      <Stack>
+        {categories.map((category) => (
+          <CategoryItem category={category} key={category.id} />
+        ))}
+      </Stack>
+    </Container>
   );
 }
-
-const columnTitles = ["Id", "Название"];
-const columnKeys = ["id", "name"];

@@ -9,7 +9,7 @@ export interface IUserForm {
 
 export interface ICategoryForm {
   name: string;
-  subcategories: ISubCategory[];
+  subcategories: string[];
 }
 
 export interface ICreateCategory {
