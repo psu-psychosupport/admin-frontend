@@ -31,18 +31,6 @@ const routes: IRoute[] = [
     icon: <CategoryIcon />,
   },
   {
-    name: "diagrams",
-    href: "/diagrams/list",
-    locale: "Схемы",
-    icon: <AccountTreeIcon />,
-  },
-  {
-    name: "tests",
-    href: "/tests/list",
-    locale: "Тесты",
-    icon: <QuizIcon />,
-  },
-  {
     name: "files",
     href: "/files/list",
     locale: "Загруженные файлы",
@@ -71,7 +59,7 @@ const Menu = ({ currentRoute }: { currentRoute?: string }) => {
                 currentRoute && currentRoute === route.name ? "6px" : undefined,
               color:
                 currentRoute && currentRoute === route.name
-                  ? "#000000"
+                  ? "primary.main"
                   : colors.grey[700],
             }}
             key={route.name}
