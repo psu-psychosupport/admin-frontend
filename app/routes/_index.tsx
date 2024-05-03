@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import { MetaFunction, redirect } from "@remix-run/node";
 import "@mdxeditor/editor/style.css";
 import React from "react";
 import Page from "../../components/Page";

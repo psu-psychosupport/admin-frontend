@@ -6,11 +6,12 @@ import {
   ICreatePost,
   ICreateSubCategory,
   IUpdateCategory,
-  IUpdatePost, IUpdateSubCategory,
+  IUpdatePost,
+  IUpdateSubCategory,
   IUserForm,
 } from "../components/modelForms/types";
 
-const LOCAL_URL = "http://127.0.0.1:8000";
+const LOCAL_URL = "http://127.0.0.1:8000"; //"https://stoboi.damego.ru/api"; //"http://127.0.0.1:8000";
 
 export class HttpError {
   status: number;
@@ -88,15 +89,10 @@ export default class HttpClient {
         if (error.response.status === 401 && this.refreshToken) {
           continue;
         }
-        console.log("[ERROR]", error.response.status, error.response.data)
+        console.log("[ERROR]", error.response.status, error.response.data);
         throw new HttpError(error.response.status, error.response.data.detail);
       }
-      console.log("[DATA]", response.data)
       return response.data;
-      // if (response!.status === 200) {
-      //   return response!.data;
-      // }
-      // throw `HTTP ERROR ${response.status} | ${response.data}`;
     }
   }
 
@@ -111,8 +107,6 @@ export default class HttpClient {
     }
     this.accessToken = data.accessToken;
     this.refreshToken = data.refreshToken;
-
-
   }
 
   getUsers(): Promise<IUser[]> {
@@ -209,5 +203,9 @@ export default class HttpClient {
 
   uploadMediaFile(file: File): Promise<string> {
     return this.request("POST", "/media", { file });
+  }
+
+  transformDocument(file: File): Promise<string> {
+    return this.request("POST", `/transform`, { file });
   }
 }

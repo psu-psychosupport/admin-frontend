@@ -1,8 +1,9 @@
 import { MDXEditor } from "~/components/editor.client";
-import React from "react";
+import React, { forwardRef, useRef } from "react";
 import { mdxPlugins } from "../utils/mdxPlugins";
 import i18next from "i18next";
 import translation from "./toolbar/locales/ru/translation.json";
+import { MDXEditorMethods } from "@mdxeditor/editor";
 
 i18next.init({
   lng: "ru",
@@ -13,21 +14,25 @@ i18next.init({
   },
 });
 
-export default function Editor({
-  content,
-  onContentChange,
-}: {
+export interface EditorProps {
   content: string;
   onContentChange: (content: string) => void;
-}) {
-  return (
-    <MDXEditor
-      markdown={content}
-      plugins={mdxPlugins}
-      onChange={onContentChange}
-      translation={(key, defaultValue, interpolations) => {
-        return i18next.t(key, defaultValue, interpolations) as string;
-      }}
-    />
-  );
 }
+
+const Editor = forwardRef<MDXEditorMethods, EditorProps>(
+  ({ content, onContentChange }, ref) => {
+    return (
+      <MDXEditor
+        ref={ref}
+        markdown={content}
+        plugins={mdxPlugins}
+        onChange={onContentChange}
+        translation={(key, defaultValue, interpolations) => {
+          return i18next.t(key, defaultValue, interpolations) as string;
+        }}
+      />
+    );
+  },
+);
+
+export default Editor;

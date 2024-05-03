@@ -16,4 +16,6 @@ export interface IPost {
   subcategory_id?: number;
   name: string;
   content: string;
+  category: ICategory;
+  subcategory: ISubCategory;
 }

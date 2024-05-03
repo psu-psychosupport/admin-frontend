@@ -2,7 +2,8 @@ import HttpClient from "./httpClient";
 import {
   ICategoryForm,
   ICreateCategory,
-  ICreatePost, ICreateSubCategory,
+  ICreatePost,
+  ICreateSubCategory,
   IUpdateCategory,
   IUpdatePost,
   IUserForm,
@@ -28,7 +29,7 @@ class ApiService {
   }
 
   getMe() {
-    return this.http.getMe()
+    return this.http.getMe();
   }
 
   createUser(user: IUserForm) {
@@ -105,6 +106,10 @@ class ApiService {
 
   uploadFile(file: File): Promise<string> {
     return this.http.uploadMediaFile(file);
+  }
+
+  transformDocument(file: File): Promise<string> {
+    return this.http.transformDocument(file);
   }
 }
 
