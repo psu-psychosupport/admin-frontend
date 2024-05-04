@@ -13,5 +13,5 @@ export default defineConfig({
   ssr: {
     noExternal: ["remix-utils"],
   },
-  base: "/admin"
+  base: "/admin/"
 });
