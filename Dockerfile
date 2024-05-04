@@ -7,4 +7,4 @@ COPY . .
 
 RUN npm install
 RUN npx remix vite:build
-RUN mv ./build/client /var/www/stoboi.damego.ru/html
+COPY build/client /var/www/stoboi.damego.ru.admin/html
