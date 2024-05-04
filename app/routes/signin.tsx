@@ -39,7 +39,7 @@ export default function SignInRoute() {
       formik.setErrors({ email: error });
     } else {
       console.log("[AUTH] Authorized");
-      navigate("/categories/list");
+      navigate("/admin/categories/list");
     }
   };
 

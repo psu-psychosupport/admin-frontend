@@ -24,7 +24,7 @@ export default function CategoriesAddRoute() {
       columnKeys={columnKeys}
       data={users}
       onRequestEdit={(user) => {
-        navigate(`/users/edit/${user.id}`);
+        navigate(`/admin/users/edit/${user.id}`);
       }}
     />
   );

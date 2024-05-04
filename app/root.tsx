@@ -27,7 +27,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     await apiService.getMe();
   } catch (error) {
     console.log("not authorized", error.message);
-    throw redirect("/signin");
+    throw redirect("/admin/signin");
   }
   return null;
 }

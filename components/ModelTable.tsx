@@ -31,7 +31,7 @@ export const TableHeader = ({ title, route }: { title: string; route: string }) 
         variant={"contained"}
         color={"primary"}
         sx={{ alignSelf: "flex-end" }}
-        onClick={() => navigate(`/${route}/add`)}
+        onClick={() => navigate(`/admin/${route}/add`)}
         startIcon={<AddIcon />}
       >
         Добавить

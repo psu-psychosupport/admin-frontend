@@ -4,8 +4,6 @@ import React from "react";
 import {
   PostAdd as PostAddIcon,
   Category as CategoryIcon,
-  AccountTree as AccountTreeIcon,
-  Quiz as QuizIcon,
   Source as SourceIcon,
   People as PeopleIcon,
 } from "@mui/icons-material";
@@ -20,25 +18,25 @@ interface IRoute {
 const routes: IRoute[] = [
   {
     name: "posts",
-    href: "/posts/list",
+    href: "/admin/posts/list",
     locale: "Посты",
     icon: <PostAddIcon />,
   },
   {
     name: "categories",
-    href: "/categories/list",
+    href: "/admin/categories/list",
     locale: "Категории",
     icon: <CategoryIcon />,
   },
   {
     name: "files",
-    href: "/files/list",
+    href: "/admin/files/list",
     locale: "Загруженные файлы",
     icon: <SourceIcon />,
   },
   {
     name: "users",
-    href: "/users/list",
+    href: "/admin/users/list",
     locale: "Пользователи",
     icon: <PeopleIcon />,
   },
