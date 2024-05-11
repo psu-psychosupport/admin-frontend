@@ -12,7 +12,7 @@ const Page = ({
   return (
     <Stack
       direction={"row"}
-      spacing={"10%"}
+      spacing={"5%"}
       sx={{ marginTop: "10%" }}
     >
       <Box>

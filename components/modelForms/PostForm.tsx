@@ -1,151 +1,124 @@
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import { ClientOnly } from "remix-utils/client-only";
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-  Stack,
-  Button,
-  styled,
-  colors,
-} from "@mui/material";
+import { Box, Button, colors, Stack, Typography } from "@mui/material";
 import { CloudUpload as CloudUploadIcon } from "@mui/icons-material";
-import { SelectChangeEvent } from "@mui/material/Select";
 import Editor from "../../components/Editor";
 
 import { ICategory, IPost } from "../../api/types/content";
-import { IFormPost } from "./types";
-import { apiService } from "../../api/apiService";
 import { MDXEditorMethods } from "@mdxeditor/editor";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import { useFetcher } from "@remix-run/react";
+import { ISelectPost, SelectCategory } from "./SelectCategory";
+import { ShowPostInfo } from "./ShowPostInfo";
+import { ConfirmDocumentInsertModal } from "./ConfirmDocumentInsertModal";
+import { InputDocumentFile } from "./InputDocumentFile";
 
-interface INewPost {
-  categoryId: number;
-  subcategoryId?: number;
-}
-
-function SelectCategory({
-  categories,
-  onSelect,
-}: {
-  categories: ICategory[];
-  onSelect: (data: INewPost) => void;
-}) {
-  const [category, setCategory] = useState<ICategory>();
-  const [subcategory, setSubcategory] = useState<string>();
-
-  const handleChange = (event: SelectChangeEvent) => {
-    const $category = categories.find(
-      (c) => c.id.toString() === event.target.value,
-    );
-    setCategory($category);
-    if (!$category?.subcategories.length) {
-      onSelect({
-        categoryId: $category!.id,
-      });
-    }
-  };
-
-  const handleSubcategoryChange = (event: SelectChangeEvent) => {
-    setSubcategory(event.target.value);
-    onSelect({
-      categoryId: category!.id,
-      subcategoryId: Number.parseInt(event.target.value),
-    });
-  };
-
-  return (
-    <>
-      <FormControl fullWidth>
-        <InputLabel id="select-category-label">Категория</InputLabel>
-        <Select
-          labelId="select-category-label"
-          id="select-category"
-          value={category ? category.id.toString() : ""}
-          label="Категория"
-          onChange={handleChange}
-        >
-          {categories.map((category) => (
-            <MenuItem value={category.id.toString()} key={category.id}>
-              {category.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      {!!category && !!category.subcategories.length && (
-        <FormControl fullWidth>
-          <InputLabel id="select-subcategory-label">Подкатегория</InputLabel>
-          <Select
-            labelId="select-subcategory-label"
-            id="select-subcategory"
-            value={subcategory || ""}
-            label="Подкатегория"
-            onChange={handleSubcategoryChange}
-          >
-            {category.subcategories.map((subc) => (
-              <MenuItem value={subc.id.toString()} key={subc.id}>
-                {subc.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      )}
-    </>
-  );
+interface IActionResponse {
+  goal: "category-select" | "convert-document";
+  postFound?: IPost;
+  text?: string;
 }
 
 export default function PostForm({
   categories,
   post,
-  onSubmit,
 }: {
   categories?: ICategory[];
   post?: IPost;
-  onSubmit: (post: IFormPost) => void;
 }) {
-  const [newPost, setNewPost] = useState<INewPost>();
-  const [content, setContent] = useState<string>(post?.content || "");
+  const fetcher = useFetcher();
 
+  const [newPostPayload, setNewPostPayload] = useState<ISelectPost>();
+  const [content, setContent] = useState<string>(post?.content || "");
+  const [modalIsOpened, setModalOpened] = useState(false);
+  const [modalIsShowed, setModalIsShowed] = useState(false);
   const editorRef = useRef<MDXEditorMethods>();
 
+  useEffect(() => {
+    if (!fetcher.data) {
+      return;
+    }
+    const data = fetcher.data as IActionResponse;
+    const { goal } = data;
+
+    if (goal === "convert-document") {
+      const text = data.text!;
+      setContent(text);
+      editorRef.current?.setMarkdown(text);
+      toast.success("Текст загружен", { position: "bottom-right" });
+    } else if (goal === "category-select" && data.postFound) {
+      const $post = data.postFound!;
+      setContent($post.content);
+      editorRef.current!.setMarkdown($post.content);
+    }
+  }, [fetcher.data]);
+
   const submit = () => {
-    onSubmit({
-      category_id: newPost!.categoryId,
-      subcategory_id: newPost!.subcategoryId
-        ? newPost?.subcategoryId
-        : undefined,
-      content,
+    let payload;
+
+    if (post) {
+      payload = {
+        goal: "edit-post",
+        postId: post.id,
+        post: {
+          content,
+        },
+      };
+    } else {
+      payload = {
+        goal: "add-post",
+        post: {
+          category_id: newPostPayload!.categoryId,
+          subcategory_id: newPostPayload!.subcategoryId
+            ? newPostPayload?.subcategoryId
+            : undefined,
+          content,
+        },
+      };
+    }
+
+    fetcher.submit(payload, { method: "POST", encType: "application/json" });
+  };
+
+  const handleCategorySelect = async (data: ISelectPost) => {
+    fetcher.submit(
+      // @ts-ignore
+      {
+        goal: "category-select",
+        post: data,
+      },
+      { method: "POST", encType: "application/json" },
+    );
+    setNewPostPayload(data);
+  };
+
+  const selectDocumentFile = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target!.files!.item(0)!;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("goal", "convert-document");
+    fetcher.submit(formData, {
+      method: "POST",
+      encType: "multipart/form-data",
     });
   };
 
-  const handleCategorySelect = (data: INewPost) => {
-    setNewPost(data);
-  };
-
-  const transformDocumentToMarkdown = async (
-    event: ChangeEvent<HTMLInputElement>,
-  ) => {
-    // TODO: Notify user he could overwrite text + check for existing content
-    const file = event.target!.files!.item(0)!;
-    const text = await apiService.transformDocument(file);
-    setContent(text);
-    editorRef.current?.setMarkdown(text);
-    toast.success("Текст загружен", { position: "bottom-right" });
+  const closeModal = () => {
+    setModalIsShowed(true);
+    setModalOpened(false);
   };
 
   return (
-    <Stack sx={{ gap: 4, marginBottom: "5vh" }}>
+    <Stack sx={{ gap: 2, marginY: "5vh" }}>
       {!post && (
         <SelectCategory
           categories={categories!}
           onSelect={handleCategorySelect}
         />
       )}
-      {newPost && (
+      {post && <ShowPostInfo post={post} />}
+      {(post || newPostPayload) && (
         <>
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button
@@ -153,15 +126,19 @@ export default function PostForm({
               role={undefined}
               variant={"contained"}
               startIcon={<CloudUploadIcon />}
+              onClick={
+                !!content && !modalIsShowed
+                  ? () => setModalOpened(true)
+                  : undefined
+              }
             >
-              Загрузить текст с файла (.txt, .docx){" "}
-              <VisuallyHiddenInput
-                type="file"
-                accept={".doc,.docx,.txt"}
-                onChange={transformDocumentToMarkdown}
-              />
+              Загрузить текст с файла (.txt, .docx)
+              {(!content || modalIsShowed) && (
+                <InputDocumentFile onChange={selectDocumentFile} />
+              )}
             </Button>
           </Box>
+              
           <ClientOnly
             fallback={
               <Box>
@@ -188,25 +165,14 @@ export default function PostForm({
             )}
           </ClientOnly>
         </>
-      )}
+       )}
 
       {!!content.length && (
         <Button onClick={submit} variant={"contained"}>
-          Опубликовать
+          {post ? "Сохранить" : "Опубликовать"}
         </Button>
       )}
+      <ConfirmDocumentInsertModal isOpen={modalIsOpened} onClose={closeModal} />
     </Stack>
   );
 }
-
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});

@@ -6,6 +6,7 @@ import {
   Category as CategoryIcon,
   Source as SourceIcon,
   People as PeopleIcon,
+  Quiz as QuizIcon,
 } from "@mui/icons-material";
 
 interface IRoute {
@@ -18,25 +19,31 @@ interface IRoute {
 const routes: IRoute[] = [
   {
     name: "posts",
-    href: "/admin/posts/list",
+    href: "/posts/list",
     locale: "Посты",
     icon: <PostAddIcon />,
   },
   {
     name: "categories",
-    href: "/admin/categories/list",
+    href: "/categories/list",
     locale: "Категории",
     icon: <CategoryIcon />,
   },
+  // {
+  //   name: "files",
+  //   href: "/files/list",
+  //   locale: "Загруженные файлы",
+  //   icon: <SourceIcon />,
+  // },
   {
-    name: "files",
-    href: "/admin/files/list",
-    locale: "Загруженные файлы",
-    icon: <SourceIcon />,
+    name: "tests",
+    href: "/tests/list",
+    locale: "Тесты",
+    icon: <QuizIcon />,
   },
   {
     name: "users",
-    href: "/admin/users/list",
+    href: "/users/list",
     locale: "Пользователи",
     icon: <PeopleIcon />,
   },

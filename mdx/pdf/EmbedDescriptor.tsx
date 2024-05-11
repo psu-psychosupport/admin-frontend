@@ -1,6 +1,7 @@
 import { LeafDirective } from "mdast-util-directive";
 import { DirectiveDescriptor } from "@mdxeditor/editor";
 import React from "react";
+import DescriptorTemplate from "../DescriptorTemplate";
 
 interface EmbedDirectiveNode extends LeafDirective {
   name: "pdf";
@@ -17,25 +18,16 @@ const PdfDirectiveDescriptor: DirectiveDescriptor<EmbedDirectiveNode> = {
   hasChildren: false,
   Editor: ({ mdastNode, lexicalNode, parentEditor }) => {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+      <DescriptorTemplate
+        onDelete={() => {
+          parentEditor.update(() => {
+            lexicalNode.selectNext();
+            lexicalNode.remove();
+          });
         }}
       >
-        <button
-          onClick={() => {
-            parentEditor.update(() => {
-              lexicalNode.selectNext();
-              lexicalNode.remove();
-            });
-          }}
-        >
-          delete
-        </button>
         <embed src={mdastNode.attributes?.url} title="Embed"></embed>
-      </div>
+      </DescriptorTemplate>
     );
   },
 };

@@ -16,7 +16,7 @@ import { VideoDirectiveDescriptor } from "../mdx/video";
 import { AudioDirectiveDescriptor } from "../mdx/audio";
 import { apiService } from "../api/apiService";
 import { DiagramDirectiveDescriptor } from "../mdx/diagram";
-import { PdfDirectiveDescriptor } from "../mdx/pdf";
+import { PdfDirectiveDescriptor, PresentationDirectiveDescriptor } from "../mdx/pdf";
 
 export const mdxPlugins = [
   toolbarPlugin({
@@ -27,9 +27,6 @@ export const mdxPlugins = [
   headingsPlugin(),
   linkPlugin(),
   linkDialogPlugin(),
-  imagePlugin({
-    imageUploadHandler: apiService.uploadFile,
-  }),
   tablePlugin(),
   thematicBreakPlugin(),
   markdownShortcutPlugin(),
@@ -39,6 +36,9 @@ export const mdxPlugins = [
       AudioDirectiveDescriptor,
       DiagramDirectiveDescriptor,
       PdfDirectiveDescriptor,
+      PresentationDirectiveDescriptor,
+      // todo: image descriptor; test descriptor; file
+      
     ],
   }),
 ];

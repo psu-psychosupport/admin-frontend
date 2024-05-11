@@ -10,7 +10,27 @@ import {
 } from "@mui/material";
 import React from "react";
 import { apiService } from "../../api/apiService";
-import { useNavigate } from "@remix-run/react";
+import { Form, useNavigate } from "@remix-run/react";
+import { ActionFunctionArgs, redirect } from "@remix-run/node";
+import { sessionStorage } from "~/sessions";
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const email = String(formData.get("email"));
+  const password = String(formData.get("password"));
+
+  const session = await sessionStorage.getSession(request.headers.get("cookie"));
+
+  const tokens = await apiService.signIn(email, password);
+  session.set("access_token", tokens.data?.access_token);
+  session.set("refresh_token", tokens.data?.refresh_token);
+
+  return redirect("/posts/list", {
+    headers: {
+      "Set-Cookie": await sessionStorage.commitSession(session),
+    },
+  });
+}
 
 const validationSchema = yup.object({
   email: yup
@@ -25,23 +45,21 @@ const validationSchema = yup.object({
 
 export default function SignInRoute() {
   const navigate = useNavigate();
-  const onSubmit = async ({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) => {
-    const error = await apiService.signIn(email, password);
-    console.log(error);
-    if (error) {
-      await formik.setTouched({ email: true }, false);
-      formik.setErrors({ email: error });
-    } else {
-      console.log("[AUTH] Authorized");
-      navigate("/admin/categories/list");
-    }
-  };
+  // const onSubmit = async ({
+  //   email,
+  //   password,
+  // }: {
+  //   email: string;
+  //   password: string;
+  // }) => {
+  //   const res = await apiService.signIn(email, password);
+  //   if (res.error) {
+  //     await formik.setTouched({ email: true }, false);
+  //     formik.setErrors({ email: getErrorMessage(errorCode) });
+  //   } else {
+  //     navigate("/categories/list");
+  //   }
+  // };
 
   const formik = useFormik({
     initialValues: {
@@ -49,7 +67,9 @@ export default function SignInRoute() {
       password: "",
     },
     validationSchema,
-    onSubmit,
+    onSubmit: () => {
+      console.log("SHOULD NEVER BE TRIGGERED");
+    },
   });
 
   return (
@@ -60,7 +80,7 @@ export default function SignInRoute() {
         <Typography variant={"h4"} fontWeight={"800"} sx={{ marginBottom: 2 }}>
           Вход в админ панель
         </Typography>
-        <form onSubmit={formik.handleSubmit}>
+        <Form method={"POST"}>
           <Stack spacing={2}>
             <TextField
               name={"email"}
@@ -93,7 +113,7 @@ export default function SignInRoute() {
               Войти
             </Button>
           </Stack>
-        </form>
+        </Form>
       </Box>
     </Container>
   );

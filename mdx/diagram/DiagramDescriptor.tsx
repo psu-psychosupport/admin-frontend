@@ -3,6 +3,7 @@ import { DirectiveDescriptor } from "@mdxeditor/editor";
 import React from "react";
 import { IconButton } from "@mui/material";
 import { Delete as DeleteIcon } from "@mui/icons-material";
+import DescriptorTemplate from "../DescriptorTemplate";
 
 interface DiagramDirectiveNode extends LeafDirective {
   name: "diagram";
@@ -18,28 +19,17 @@ const DiagramDirectiveDescriptor: DirectiveDescriptor<DiagramDirectiveNode> = {
   attributes: ["data"],
   hasChildren: false,
   Editor: ({ mdastNode, lexicalNode, parentEditor }) => {
-    console.log("URL", mdastNode.attributes?.data);
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 4,
+      <DescriptorTemplate
+        onDelete={() => {
+          parentEditor.update(() => {
+            lexicalNode.selectNext();
+            lexicalNode.remove();
+          });
         }}
       >
         <div dangerouslySetInnerHTML={{ __html: mdastNode.attributes.data }} />
-        <IconButton
-          onClick={() => {
-            parentEditor.update(() => {
-              lexicalNode.selectNext();
-              lexicalNode.remove();
-            });
-          }}
-        >
-          <DeleteIcon />
-        </IconButton>
-      </div>
+      </DescriptorTemplate>
     );
   },
 };

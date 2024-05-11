@@ -2,15 +2,55 @@ import { json } from "@remix-run/node";
 import React from "react";
 
 import { apiService } from "../../api/apiService";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 import { TableHeader } from "../../components/ModelTable";
-import { Stack, Typography, Box, Container, IconButton } from "@mui/material";
+import {
+  Stack,
+  Typography,
+  Container,
+  IconButton,
+  colors,
+} from "@mui/material";
 import { Edit as EditIcon } from "@mui/icons-material";
+import { IPost } from "../../api/types/content";
 
 export async function loader() {
-  const posts = await apiService.getPosts(); // TODO: change type
-  return json(posts);
+  const res = await apiService.getPosts();
+  if (res.error) return json([]);
+  return json(res.data);
 }
+
+const PostItem = ({ post }: { post: IPost }) => {
+  const navigate = useNavigate();
+
+  const onEdit = () => {
+    navigate(`/posts/edit/${post.id}`);
+  };
+
+  return (
+    <Stack
+      direction={"row"}
+      bgcolor={colors.grey[100]}
+      sx={{ justifyContent: "space-between", borderRadius: 4 }}
+    >
+      <Stack sx={{ padding: "2%" }}>
+        <Typography variant={"h5"} fontWeight={"500"}>
+          {post.category.name}
+        </Typography>
+        {post.subcategory && (
+          <Typography variant={"h6"} fontWeight={"400"}>
+            {post.subcategory.name}
+          </Typography>
+        )}
+      </Stack>
+      <Stack alignSelf={"center"}>
+        <IconButton onClick={onEdit}>
+          <EditIcon />
+        </IconButton>
+      </Stack>
+    </Stack>
+  );
+};
 
 export default function PostsListRoute() {
   const posts = useLoaderData<typeof loader>();
@@ -21,17 +61,7 @@ export default function PostsListRoute() {
 
       <Stack spacing={2}>
         {posts.map((post) => (
-          <Container key={post.id}>
-            <Stack sx={{ border: 1, padding: "2%", width: "50vw" }}>
-              <Typography variant={"h5"}>{post.category.name}</Typography>
-              <Typography variant={"h6"}>{post.subcategory.name}</Typography>
-            </Stack>
-            <Stack>
-              <IconButton>
-                <EditIcon />
-              </IconButton>
-            </Stack>
-          </Container>
+          <PostItem post={post} key={post.id} />
         ))}
       </Stack>
     </Container>

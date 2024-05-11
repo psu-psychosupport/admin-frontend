@@ -11,6 +11,7 @@ import React from "react";
 import * as yup from "yup";
 import { ICategoryForm } from "./types";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { useFetcher } from "@remix-run/react";
 
 const validationSchema = yup.object({
   name: yup.string().required("Это поле обязательно к заполнению"),
@@ -46,18 +47,21 @@ const Subcategory = ({
   );
 };
 
-const CategoryForm = ({
-  onSubmit,
-}: {
-  onSubmit: (payload: ICategoryForm) => void;
-}) => {
+const CategoryForm = () => {
+  const fetcher = useFetcher();
+
   const formik = useFormik<ICategoryForm>({
     initialValues: {
       name: "",
       subcategories: [],
     },
     validationSchema,
-    onSubmit,
+    onSubmit: (data) => {
+      fetcher.submit(
+        { category: data },
+        { method: "POST", encType: "application/json" },
+      );
+    },
   });
 
   return (

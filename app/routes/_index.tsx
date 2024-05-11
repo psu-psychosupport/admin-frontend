@@ -7,10 +7,6 @@ export const meta: MetaFunction = () => {
   return [{ title: "Панель управления сайтом" }];
 };
 
-export default function Index() {
-  return (
-    <Page>
-      <p>aboba</p>
-    </Page>
-  );
+export async function loader() {
+  return redirect("/posts/list")
 }

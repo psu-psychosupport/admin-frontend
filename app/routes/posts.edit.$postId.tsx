@@ -1,22 +1,46 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  json,
+  LoaderFunctionArgs,
+} from "@remix-run/node";
 import React from "react";
 
 import { apiService } from "../../api/apiService";
-import {IFormPost} from "../../components/modelForms/types";
 import { useLoaderData } from "@remix-run/react";
 import PostForm from "../../components/modelForms/PostForm";
+import { Container, Typography } from "@mui/material";
+import postAction from "~/actions/post";
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const post = await apiService.getPost(Number(params.postId as string));
-  return json(post);
+  const res = (await apiService.getPost({
+    postId: Number(params.postId as string),
+  }))!;
+  if (res.error) return null;
+  return json(res.data);
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  return await postAction(request);
 }
 
 export default function EditPostRoute() {
   const post = useLoaderData<typeof loader>();
 
-  const onFormSubmit = async ($post: IFormPost) => {
-    await apiService.updatePost(post.id, $post);
-  };
+  if (post === null)
+    return (
+      <Container sx={{ width: "100%" }}>
+        <Typography variant={"h4"} fontWeight={"800"}>
+          Пост не найден
+        </Typography>
+      </Container>
+    );
 
-  return <PostForm post={post} onSubmit={onFormSubmit} />;
+  return (
+    <Container sx={{ width: "100%" }}>
+      <Typography variant={"h4"} fontWeight={"800"}>
+        Редактирование поста
+      </Typography>
+      <PostForm post={post} />
+    </Container>
+  );
 }

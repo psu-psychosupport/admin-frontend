@@ -1,5 +1,5 @@
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
-import { ICategory, IPost, ISubCategory } from "./types/content";
+import axios, { AxiosInstance } from "axios";
+import { ICategory, IMedia, IPost, ISubCategory } from "./types/content";
 import { IUser } from "./types/users";
 import {
   ICreateCategory,
@@ -10,17 +10,22 @@ import {
   IUpdateSubCategory,
   IUserForm,
 } from "../components/modelForms/types";
+import { ErrorResponseCodes, MediaTypes } from "./types/enums";
+import { getErrorMessage } from "../utils/texts";
 
-const LOCAL_URL = "http://127.0.0.1:8000"; //"https://stoboi.damego.ru/api"; //"http://127.0.0.1:8000";
+export const API_URL = "http://127.0.0.1:8000";
+// process.env.NODE_ENV === "production"
+//   ? "https://stoboi.damego.ru/api"
+//   : "http://127.0.0.1:8000";
 
-export class HttpError {
-  status: number;
+export interface IApiError {
+  code: ErrorResponseCodes;
   message: string;
+}
 
-  constructor(status: number, message: string) {
-    this.status = status;
-    this.message = message;
-  }
+export interface IApiResponse<T> {
+  error?: IApiError;
+  data?: T;
 }
 
 export default class HttpClient {
@@ -30,18 +35,23 @@ export default class HttpClient {
 
   constructor() {
     this.client = axios.create({
-      baseURL: LOCAL_URL,
+      baseURL: API_URL,
       withCredentials: true,
+      validateStatus: (status) => status < 500,
     });
     this.accessToken = null;
     this.refreshToken = null;
   }
 
-  async request(
+  async request<T>(
     method: string,
     endpoint: string,
-    { data, file }: { data?: object; file?: File } = {},
-  ) {
+    {
+      data,
+      file,
+      asFormData,
+    }: { data?: object; file?: File; asFormData?: boolean } = {}
+  ): Promise<IApiResponse<T>> {
     let payload = undefined;
 
     if (file) {
@@ -50,50 +60,72 @@ export default class HttpClient {
       if (data) {
         payload.append("json_payload", JSON.stringify(data));
       }
+    } else if (asFormData) {
+      payload = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        payload.append(key, value);
+      });
     } else {
       payload = data;
     }
-    const token = this.accessToken || this.refreshToken;
-    let response: AxiosResponse;
+    console.log(`[HTTP] [${method}] '${endpoint}' data: ${payload}`);
+    let cookies = "";
+    if (this.accessToken) cookies += `access_token=${this.accessToken}; `;
+    if (this.refreshToken) cookies += `refresh_token=${this.refreshToken}; `;
 
-    for (let i = 0; i < 2; i += 1) {
-      if (i === 1) {
-        console.log("[HTTP] Requesting new access token");
-        const response = await this.client.request({
-          method: "POST",
-          url: "/refresh",
-          headers: token
-            ? {
-                Authorization: `Bearer ${token}`,
-              }
-            : undefined,
-        });
-        if (response.status === 200) {
-          this.accessToken = response.data.accessToken;
-          return await this.request(method, endpoint, { data, file });
-        }
-      }
+    const response = await this.client.request({
+      method,
+      url: endpoint,
+      data: payload,
+      headers: {
+        "Content-Type":
+          payload instanceof FormData
+            ? "multipart/form-data"
+            : "application/json",
+        Cookie: cookies,
+      },
+    });
 
-      try {
-        response = await this.client.request({
-          method,
-          url: endpoint,
-          data: payload,
-          headers: token
-            ? {
-                Authorization: `Bearer ${token}`,
-              }
-            : undefined,
-        });
-      } catch (error: AxiosError<any, any>) {
-        if (error.response.status === 401 && this.refreshToken) {
-          continue;
-        }
-        console.log("[ERROR]", error.response.status, error.response.data);
-        throw new HttpError(error.response.status, error.response.data.detail);
+    if (response.status >= 400) {
+      if (response.data.detail.code === ErrorResponseCodes.TOKEN_EXPIRED) {
+        await this.refreshAccessToken();
+        await this.request(method, endpoint, { data, file, asFormData });
       }
-      return response.data;
+      const error = {
+        code: response.data.detail.code,
+        message: getErrorMessage(response.data.detail.code),
+      };
+
+      console.error(
+        `HTTP Error with code ${error.code}. Message: ${error.message}`
+      );
+      return { error };
     }
+    return {
+      data: response.data,
+    };
+  }
+
+  setTokens({
+    accessToken,
+    refreshToken,
+  }: {
+    accessToken: string;
+    refreshToken: string;
+  }) {
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
+  }
+
+  async refreshAccessToken() {
+    this.accessToken = null;
+    const res = await this.request<{
+      access_token: string;
+    }>("POST", "/refresh");
+    if (res.data) {
+      this.accessToken = res.data.access_token;
+    }
+    return res;
   }
 
   async signIn(email: string, password: string) {
@@ -101,111 +133,152 @@ export default class HttpClient {
     form.append("email", email);
     form.append("password", password);
 
-    const data = await this.request("POST", "/signin", { data: form });
-    if (data.detail) {
-      return data.detail; // TODO: rewrite
+    const res = await this.request<{
+      access_token: string;
+      refresh_token: string;
+    }>("POST", "/signin", { data: form });
+
+    if (res.data) {
+      this.accessToken = res.data.access_token;
+      this.refreshToken = res.data.refresh_token;
     }
-    this.accessToken = data.accessToken;
-    this.refreshToken = data.refreshToken;
+
+    return res;
   }
 
-  getUsers(): Promise<IUser[]> {
-    return this.request("GET", "/users");
+  getUsers() {
+    return this.request<IUser[]>("GET", "/users");
   }
 
-  getUser(userId: number): Promise<IUser> {
-    return this.request("GET", `/users/${userId}`);
+  getUser(userId: number) {
+    return this.request<IUser>("GET", `/users/${userId}`);
   }
 
-  getMe(): Promise<IUser> {
-    return this.request("GET", "/users/me");
+  getMe() {
+    return this.request<IUser>("GET", "/users/me");
   }
 
   createUser(user: IUserForm) {
-    return this.request("POST", "/users", { data: user });
+    return this.request<IUser>("POST", "/users", {
+      data: user,
+      asFormData: true,
+    });
   }
 
   updateUser(userId: number, user: IUserForm) {
-    return this.request("PATCH", `/users/${userId}`, { data: user });
+    return this.request<IUser>("PATCH", `/users/${userId}`, { data: user });
   }
 
   deleteUser(userId: number) {
-    return this.request("DELETE", `/users/${userId}`);
+    return this.request<null>("DELETE", `/users/${userId}`);
   }
 
-  getCategories(): Promise<ICategory[]> {
-    return this.request("GET", "/categories");
+  getCategories() {
+    return this.request<ICategory[]>("GET", "/categories");
   }
 
-  getCategory(categoryId: number): Promise<ICategory> {
-    return this.request("GET", `/categories/${categoryId}`);
+  getCategory(categoryId: number) {
+    return this.request<ICategory>("GET", `/categories/${categoryId}`);
   }
 
   createCategory(category: ICreateCategory) {
-    return this.request("POST", `/categories`, {
+    return this.request<ICategory>("POST", `/categories`, {
       data: category,
     });
   }
 
   updateCategory(categoryId: number, category: IUpdateCategory) {
-    return this.request("PATCH", `/categories/${categoryId}`, {
+    return this.request<ICategory>("PATCH", `/categories/${categoryId}`, {
       data: category,
     });
   }
 
   deleteCategory(categoryId: number) {
-    return this.request("DELETE", `/categories/${categoryId}`);
+    return this.request<null>("DELETE", `/categories/${categoryId}`);
   }
 
-  getSubCategories(): Promise<ISubCategory[]> {
-    return this.request("GET", "/subcategories");
+  getSubCategories() {
+    return this.request<ISubCategory[]>("GET", "/subcategories");
   }
 
-  getSubcategory(subcategoryId: number): Promise<ICategory> {
-    return this.request("GET", `/subcategories/${subcategoryId}`);
+  getSubcategory(subcategoryId: number) {
+    return this.request<ISubCategory>("GET", `/subcategories/${subcategoryId}`);
   }
 
   createSubcategory(subcategory: ICreateSubCategory) {
-    return this.request("POST", `/subcategories`, {
+    return this.request<ISubCategory>("POST", `/subcategories`, {
       data: subcategory,
     });
   }
 
   updateSubcategory(subcategoryId: number, categoryUpdate: IUpdateSubCategory) {
-    return this.request("PATCH", `/subcategories/${subcategoryId}`, {
-      data: categoryUpdate,
-    });
+    return this.request<ISubCategory>(
+      "PATCH",
+      `/subcategories/${subcategoryId}`,
+      {
+        data: categoryUpdate,
+      }
+    );
   }
 
   deleteSubcategory(subcategoryId: number) {
-    return this.request("DELETE", `/subcategories/${subcategoryId}`);
+    return this.request<null>("DELETE", `/subcategories/${subcategoryId}`);
   }
 
-  getPosts(): Promise<IPost[]> {
-    return this.request("GET", "/posts");
+  getPosts() {
+    return this.request<IPost[]>("GET", "/posts");
   }
 
-  getPost(postId: number) {
-    return this.request("GET", `/posts/${postId}`);
+  getPostById(postId: number) {
+    return this.request<IPost>("GET", `/posts/${postId}`);
+  }
+
+  getPostByCategory(categoryId: number) {
+    return this.request<IPost>("GET", `/categories/${categoryId}/post`);
+  }
+
+  getPostBySubcategory(subcategoryId: number) {
+    return this.request<IPost>("GET", `/subcategories/${subcategoryId}/post`);
   }
 
   createPost(post: ICreatePost) {
-    return this.request("POST", "/posts", { data: post });
+    return this.request<IPost>("POST", "/posts", { data: post });
   }
 
   updatePost(postId: number, post: IUpdatePost) {
-    return this.request("PATCH", `/posts/${postId}`, { data: post });
+    return this.request<IPost>("PATCH", `/posts/${postId}`, { data: post });
   }
 
   deletePost(postId: number) {
-    return this.request("DELETE", `/posts/${postId}`);
+    return this.request<null>("DELETE", `/posts/${postId}`);
   }
 
-  uploadMediaFile(file: File): Promise<string> {
-    return this.request("POST", "/media", { file });
+  getMedia<T>(mediaId: number) {
+    return this.request<T>("GET", `/media/${mediaId}`);
   }
 
-  transformDocument(file: File): Promise<string> {
-    return this.request("POST", `/transform`, { file });
+  uploadMedia({ file, data }: { file?: File; data?: { [key: string]: any } }) {
+    return this.request<IMedia<any>>("POST", "/media", {
+      file,
+      data,
+      asFormData: true,
+    });
+  }
+
+  getMediaList<T>(type?: MediaTypes) {
+    if (!type) {
+      return this.request<T>("GET", `/media/list}`);
+    }
+    return this.request<T>("GET", `/media/list/${type}`);
+  }
+
+  updateMedia<T>(mediaId: number, data: object) {
+    return this.request<IMedia<T>>("PATCH", `/media/${mediaId}`, {
+      data: { data },
+    });
+  }
+
+  transformDocument(file: File) {
+    return this.request<string>("POST", `/transform`, { file });
   }
 }

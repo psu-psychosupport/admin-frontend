@@ -1,3 +1,5 @@
+import {MediaTypes} from "./enums";
+
 export interface ICategory {
   id: number;
   name: string;
@@ -18,4 +20,12 @@ export interface IPost {
   content: string;
   category: ICategory;
   subcategory: ISubCategory;
+}
+
+export interface IMedia<T> {
+  id: number;
+  file_url?: string;
+  file_name?: string;
+  type: MediaTypes;
+  data?: T;
 }

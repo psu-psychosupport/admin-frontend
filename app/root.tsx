@@ -13,21 +13,35 @@ import { MuiMeta } from "./mui/MuiMeta";
 import { LinksFunction, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { MuiDocument } from "./mui/MuiDocument";
 import React from "react";
-import Header from "../components/Header";
+import Header from "./components/Header";
 import { apiService } from "../api/apiService";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import { sessionStorage } from "~/sessions";
 
 export const links: LinksFunction = () => [...getMuiLinks()];
 
 export async function loader({ request }: LoaderFunctionArgs) {
   if (request.url.endsWith("/signin")) return null;
+  const session = await sessionStorage.getSession(
+    request.headers.get("cookie"),
+  );
+  const accessToken = session.get("access_token");
+  const refreshToken = session.get("refresh_token");
 
-  try {
-    await apiService.getMe();
-  } catch (error) {
-    console.log("not authorized", error.message);
-    throw redirect("/admin/signin");
+  if (!accessToken && !refreshToken) throw redirect("/signin");
+
+  apiService.setCredentialsTokens({ accessToken, refreshToken });
+
+  const response = await apiService.getMe();
+  if (response.error) {
+    if (!refreshToken) throw redirect("/signin");
+    const res = await apiService.refreshAccessToken();
+    if (res.error) throw redirect("/signin");
+    session.set("access_token", res.data?.access_token);
+    const headers = new Headers();
+    headers.append("Set-Cookie", await sessionStorage.commitSession(session));
+    throw redirect(request.url, { headers });
   }
   return null;
 }

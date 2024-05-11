@@ -8,12 +8,12 @@ import {
   FormControlLabel,
   TextField,
 } from "@mui/material";
-import { IUserForm } from "./types";
 import { useFormik } from "formik";
 import React from "react";
 import * as yup from "yup";
 import { IUser } from "../../api/types/users";
 import { userHasPermission, UserPermissions } from "../../api/types/enums";
+import { useFetcher } from "@remix-run/react";
 
 const validationSchema = yup.object({
   email: yup
@@ -27,13 +27,9 @@ const validationSchema = yup.object({
   name: yup.string().required("Имя обязательно к заполнению"),
 });
 
-const UserForm = ({
-  user,
-  onSubmit,
-}: {
-  user?: IUser;
-  onSubmit: (payload: IUserForm) => void;
-}) => {
+const UserForm = ({ user }: { user?: IUser }) => {
+  const fetcher = useFetcher();
+
   const formik = useFormik({
     initialValues: {
       name: user?.name || "",
@@ -43,12 +39,13 @@ const UserForm = ({
     },
     validationSchema,
     onSubmit: ({ name, email, password, permissions }) => {
-      onSubmit({
+      const user = {
         name,
         email,
         password,
         permissions: permissions.reduce((acc, sum) => sum + acc, 0),
-      });
+      };
+      fetcher.submit({ user }, { method: "POST", encType: "application/json" });
     },
   });
 

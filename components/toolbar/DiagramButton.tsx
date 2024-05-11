@@ -13,7 +13,7 @@ const DiagramButton = () => {
       tooltipTitle="Диаграмма"
       submitButtonTitle="Добавить"
       buttonContent={<AccountTreeIcon />}
-      dialogInputPlaceholder={"https://viewer.diagrams.net/..."}
+      dialogInputPlaceholder={"<iframe ..."}
       onSubmit={(data) => {
         const sanitizedHtml = sanitizeHtml(data);
         if (sanitizedHtml !== data) {

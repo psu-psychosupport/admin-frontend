@@ -4,11 +4,12 @@ import React from "react";
 import { apiService } from "../../api/apiService";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import ModelTable from "../../components/ModelTable";
+import { getTextUserPermissions } from "../../utils/texts";
 
 export async function loader() {
-  const users = await apiService.getUsers();
-
-  return json(users);
+  const res = await apiService.getUsers();
+  if (res.error) return json([]);
+  return json(res.data);
 }
 
 export default function CategoriesAddRoute() {
@@ -22,9 +23,15 @@ export default function CategoriesAddRoute() {
       headerTitle={"Пользователи"}
       columnTitles={columnTitles}
       columnKeys={columnKeys}
-      data={users}
+      data={users.map((user) => {
+        // Yes I know its dummy thing
+        const $user = { ...user };
+        $user.is_verified = user.is_verified ? "Да" : "Нет";
+        $user.permissions = getTextUserPermissions(user.permissions);
+        return $user;
+      })}
       onRequestEdit={(user) => {
-        navigate(`/admin/users/edit/${user.id}`);
+        navigate(`/users/edit/${user.id}`);
       }}
     />
   );

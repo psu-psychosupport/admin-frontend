@@ -1,19 +1,35 @@
-import HttpClient from "./httpClient";
+import HttpClient, { API_URL } from "./httpClient";
 import {
-  ICategoryForm,
   ICreateCategory,
   ICreatePost,
   ICreateSubCategory,
   IUpdateCategory,
   IUpdatePost,
+  IUpdateSubCategory,
   IUserForm,
 } from "../components/modelForms/types";
+import { MediaTypes } from "./types/enums";
+import { IMedia } from "./types/content";
 
 class ApiService {
   private http: HttpClient;
 
   constructor() {
     this.http = new HttpClient();
+  }
+
+  setCredentialsTokens({
+    accessToken,
+    refreshToken,
+  }: {
+    accessToken: string;
+    refreshToken: string;
+  }) {
+    return this.http.setTokens({ accessToken, refreshToken });
+  }
+
+  refreshAccessToken() {
+    return this.http.refreshAccessToken();
   }
 
   signIn(email: string, password: string) {
@@ -76,7 +92,10 @@ class ApiService {
     return this.http.createSubcategory(subcategory);
   }
 
-  updateSubcategory(subcategory: number, subcategoryUpdate: IUpdateCategory) {
+  updateSubcategory(
+    subcategory: number,
+    subcategoryUpdate: IUpdateSubCategory,
+  ) {
     return this.http.updateSubcategory(subcategory, subcategoryUpdate);
   }
 
@@ -88,8 +107,17 @@ class ApiService {
     return this.http.getPosts();
   }
 
-  getPost(postId: number) {
-    return this.http.getPost(postId);
+  getPost({
+    postId,
+    categoryId,
+    subcategoryId,
+  }: { postId?: number; categoryId?: number; subcategoryId?: number } = {}) {
+    if (!postId && !categoryId && !subcategoryId) {
+      throw new Error("Missing arguments");
+    }
+    if (postId) return this.http.getPostById(postId);
+    if (subcategoryId) return this.http.getPostBySubcategory(subcategoryId);
+    if (categoryId) return this.http.getPostByCategory(categoryId);
   }
 
   createPost(post: ICreatePost) {
@@ -104,11 +132,42 @@ class ApiService {
     return this.http.deletePost(postId);
   }
 
-  uploadFile(file: File): Promise<string> {
-    return this.http.uploadMediaFile(file);
+  async getMedia<T>(mediaId: number) {
+    const res = await this.http.getMedia<IMedia<T>>(mediaId);
+
+    if (res.data && res.data.data) {
+      res.data.data = JSON.parse(res.data.data as string);
+    }
+
+    return res;
   }
 
-  transformDocument(file: File): Promise<string> {
+  uploadMedia({ file, data }: { file?: File; data?: { [key: string]: any } }) {
+    return this.http.uploadMedia({ file, data });
+  }
+
+  async getMediaList<T>(type?: MediaTypes) {
+    const res = await this.http.getMediaList<IMedia<T>[]>(type);
+
+    if (res.error || res.data!.length && res.data![0].file_url) return res;
+
+    res.data = res.data!.map((d) => {
+      d.data = JSON.parse(d.data as string);
+      return d;
+    });
+
+    return res;
+  }
+
+  updateMedia<T>(mediaId: number, data: object) {
+    return this.http.updateMedia<T>(mediaId, data);
+  }
+
+  getFullFileUrl(fileUrl: string) {
+    return `${API_URL}/${fileUrl}`
+  }
+
+  transformDocument(file: File) {
     return this.http.transformDocument(file);
   }
 }
