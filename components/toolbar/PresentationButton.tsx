@@ -4,7 +4,7 @@ import { LeafDirective } from "mdast-util-directive";
 import React, {useEffect} from "react";
 import { CoPresent as CoPresentIcon } from "@mui/icons-material";
 import { useFetcher } from "@remix-run/react";
-import { FileDialog } from "../../mdx/FileDialog";
+import { FileOrUrlDialog } from "../../mdx/FileOrUrlDialog";
 
 const InsertPresentation = () => {
   const fetcher = useFetcher<{
@@ -30,7 +30,7 @@ const InsertPresentation = () => {
   }, [fetcher.data]);
 
   return (
-    <FileDialog
+    <FileOrUrlDialog
       uploadFileTitle={"Загрузите презентацию с вашего устройства"}
       tooltipTitle="Вставить презентацию"
       submitButtonTitle="Загрузить"

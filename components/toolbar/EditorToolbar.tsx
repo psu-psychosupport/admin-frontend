@@ -9,6 +9,7 @@ import {
   BoldItalicUnderlineToggles,
   ChangeAdmonitionType,
   InsertTable,
+  InsertImage,
   InsertThematicBreak,
   ListsToggle,
   UndoRedo,
@@ -20,8 +21,9 @@ import {
 import AudioButton from "./AudioButton";
 import VideoButton from "./VideoButton";
 import DiagramButton from "./DiagramButton";
-import ImageButton from "./ImageButton";
 import InsertPresentation from "./PresentationButton";
+import FileButton from "./FileButton";
+import InsertTest from "./TestButton";
 
 function whenInAdmonition(editorInFocus: EditorInFocus | null) {
   const node = editorInFocus?.rootNode;
@@ -63,10 +65,11 @@ const EditorToolbar = () => {
                 <Separator />
 
                 <CreateLink />
-                <ImageButton />
+                <InsertImage />
                 <AudioButton />
                 <VideoButton />
                 <DiagramButton />
+                <FileButton />
                 <InsertPresentation />
 
                 <Separator />

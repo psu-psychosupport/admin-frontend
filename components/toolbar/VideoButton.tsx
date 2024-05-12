@@ -1,6 +1,6 @@
 import { usePublisher } from "@mdxeditor/gurx";
 import { insertDirective$ } from "@mdxeditor/editor";
-import { FileDialog } from "../../mdx/FileDialog";
+import { FileOrUrlDialog } from "../../mdx/FileOrUrlDialog";
 import { LeafDirective } from "mdast-util-directive";
 import React, {useEffect} from "react";
 import { PlayCircle as PlayCircleIcon } from "@mui/icons-material";
@@ -32,7 +32,7 @@ const VideoButton = () => {
   }, [fetcher.data]);
 
   return (
-    <FileDialog
+    <FileOrUrlDialog
       uploadFileTitle={"Загрузите видео с вашего устройства"}
       tooltipTitle="Видео"
       submitButtonTitle="Загрузить"

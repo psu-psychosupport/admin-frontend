@@ -1,6 +1,6 @@
 import { usePublisher } from "@mdxeditor/gurx";
 import { insertDirective$ } from "@mdxeditor/editor";
-import { FileDialog } from "../../mdx/FileDialog";
+import { FileOrUrlDialog } from "../../mdx/FileOrUrlDialog";
 import { LeafDirective } from "mdast-util-directive";
 import React, { useEffect } from "react";
 import { Audiotrack as AudiotrackIcon } from "@mui/icons-material";
@@ -28,7 +28,7 @@ const AudioButton = () => {
   }, [fetcher.data]);
 
   return (
-    <FileDialog
+    <FileOrUrlDialog
       uploadFileTitle={"Загрузите аудио с вашего устройства"}
       tooltipTitle="Аудио"
       submitButtonTitle="Загрузить"

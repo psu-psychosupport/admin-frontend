@@ -10,14 +10,14 @@ const DiagramButton = () => {
 
   return (
     <DialogButton
-      tooltipTitle="Диаграмма"
+      tooltipTitle="Вставить схему"
       submitButtonTitle="Добавить"
       buttonContent={<AccountTreeIcon />}
       dialogInputPlaceholder={"<iframe ..."}
       onSubmit={(data) => {
         const sanitizedHtml = sanitizeHtml(data);
         if (sanitizedHtml !== data) {
-          // TODO: send a warning
+          alert("Неверный формат кода")
           return;
         }
 
