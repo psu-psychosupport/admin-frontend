@@ -95,6 +95,7 @@ export function TestForm({
           </Typography>
 
           <Stack>
+            <Typography variant={"body2"}>Тест необходимо сохранить ДО сохранения поста</Typography>
             <Button
               sx={{ marginTop: 4 }}
               color={"primary"}
