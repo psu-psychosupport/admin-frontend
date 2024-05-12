@@ -1,5 +1,17 @@
 import { createTheme, colors } from "@mui/material";
 
+declare module '@mui/material/styles' {
+  interface PaletteColor {
+    card?: string;
+    gray?: string;
+  }
+
+  interface SimplePaletteColorOptions {
+    card?: string;
+    gray?: string;
+  }
+}
+
 // Create a theme instance.
 const theme = createTheme({
   palette: {
@@ -7,7 +19,10 @@ const theme = createTheme({
     primary: {
       main: "#496CC6",
       dark: "#303044",
-      contrastText: "#FFFFFF"
+      light: "#638EFF",
+      contrastText: "#FFFFFF",
+      card: "#FFFFFF",
+      gray: "#6C6C6C",
     },
     secondary: {
       main: "#638EFF",
@@ -16,6 +31,12 @@ const theme = createTheme({
       main: colors.red.A400,
     },
   },
+  typography: {
+    fontFamily: [
+      'Inter',
+      'sans-serif',
+    ].join(','),
+  }
 });
 
 export default theme;

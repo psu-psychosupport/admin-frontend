@@ -20,9 +20,8 @@ const postAction = async (request: Request) => {
 
   if (goal === "add-post") {
     const post: IFormPost = payload.post;
-    console.log(post);
     await apiService.createPost(post);
-    redirect("/posts/list");
+    throw redirect("/posts/list");
   } else if (goal === "edit-post") {
     const $post = payload.post as IFormPost;
     const postId = payload.postId as number;
@@ -62,6 +61,7 @@ const postAction = async (request: Request) => {
       return json({
         goal,
         url: apiService.getFullFileUrl(res.data.file_url!),
+        name: res.data.file_name,
       });
     }
   }

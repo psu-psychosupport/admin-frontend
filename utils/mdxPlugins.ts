@@ -37,8 +37,7 @@ export const mdxPlugins = [
       DiagramDirectiveDescriptor,
       PdfDirectiveDescriptor,
       PresentationDirectiveDescriptor,
-      // todo: image descriptor; test descriptor; file
-      
+      FileDirectiveDescriptor,
     ],
   }),
 ];
