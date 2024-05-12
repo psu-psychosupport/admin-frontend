@@ -1,50 +1,15 @@
 import { LeafDirective } from "mdast-util-directive";
-import { DirectiveDescriptor } from "@mdxeditor/editor";
-import React, { useEffect, useState } from "react";
+import { DirectiveDescriptor, useMdastNodeUpdater } from "@mdxeditor/editor";
+import React from "react";
 import DescriptorTemplate from "../DescriptorTemplate";
-import { useFetcher } from "@remix-run/react";
-import { IMedia } from "api/types/content";
-import { ETestTypes, ITestForm } from "~/routes/tests.add";
-import { Box, Button, TextField, Typography } from "@mui/material";
+
+import { ITestForm } from "~/routes/tests.add";
+import { TestFormSecond } from "~/components/testForm/TestFormSecond";
 
 interface TestDirectiveNode extends LeafDirective {
   name: "test";
-  attributes: { id: string };
+  attributes: ITestForm;
 }
-
-const Test = ({ test }: { test: ITestForm }) => {
-  const onOptionClick = (index: number) => {
-    if (index === test.validOptionIndex) {
-      // todo: make btn green
-    } else {
-      // todo: make btn red
-    }
-  };
-
-  const onInput = (input: string) => {
-    if (input === test.validTextInput) {
-      // todo
-    }
-  };
-
-  return (
-    <Box>
-      <Typography>{test.title}</Typography>
-      {test.type === ETestTypes.OPTIONS &&
-        test.options!.map((option, index) => (
-          <Button key={index} onClick={() => onOptionClick(index)}>
-            {option}
-          </Button>
-        ))}
-      {test.type === ETestTypes.INPUT && (
-        <Stack>
-          <TextField />
-
-          </Stack>
-      )}
-    </Box>
-  );
-};
 
 const TestDirectiveDescriptor: DirectiveDescriptor<TestDirectiveNode> = {
   name: "test",
@@ -52,28 +17,15 @@ const TestDirectiveDescriptor: DirectiveDescriptor<TestDirectiveNode> = {
   testNode(node) {
     return node.name === "test";
   },
-  attributes: ["id"],
+  attributes: [],
   hasChildren: false,
   Editor: ({ mdastNode, lexicalNode, parentEditor }) => {
-    const fetcher = useFetcher();
-    const [data, setData] = useState<ITestForm>();
-
-    useEffect(() => {
-      fetcher.submit(
-        { goal: "request-test", mediaId: mdastNode.attributes.id },
-        { method: "POST", encType: "application/json" }
-      );
-    }, []);
-
-    useEffect(() => {
-      if (!fetcher.data || fetcher.data !== "request-test") return;
-
-      setData(fetcher.data.data);
-    }, [fetcher.data]);
-
-    if (!data) {
-      return null;
-    }
+    const updater = useMdastNodeUpdater();
+    const onSubmit = (data: ITestForm) => {
+      parentEditor.update(() => {
+        updater({ attributes: data });
+      });
+    };
 
     return (
       <DescriptorTemplate
@@ -84,7 +36,7 @@ const TestDirectiveDescriptor: DirectiveDescriptor<TestDirectiveNode> = {
           });
         }}
       >
-        <Test test={data} />
+        <TestFormSecond onSubmit={onSubmit} test={mdastNode.attributes!} />
       </DescriptorTemplate>
     );
   },

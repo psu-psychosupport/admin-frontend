@@ -20,6 +20,7 @@ import {
   PresentationDirectiveDescriptor,
 } from "../mdx/pdf";
 import {FileDirectiveDescriptor} from "../mdx/file/FileDescriptor";
+import {TestDirectiveDescriptor} from "../mdx/test/TestDescriptor";
 
 export const mdxPlugins = (uploadImage: (image: File) => Promise<string>) => [
   toolbarPlugin({
@@ -44,6 +45,7 @@ export const mdxPlugins = (uploadImage: (image: File) => Promise<string>) => [
       PdfDirectiveDescriptor,
       PresentationDirectiveDescriptor,
       FileDirectiveDescriptor,
+      TestDirectiveDescriptor,
     ],
   }),
 ];

@@ -71,6 +71,7 @@ const EditorToolbar = () => {
                 <DiagramButton />
                 <FileButton />
                 <InsertPresentation />
+                <InsertTest />
 
                 <Separator />
 

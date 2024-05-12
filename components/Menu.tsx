@@ -35,12 +35,12 @@ const routes: IRoute[] = [
   //   locale: "Загруженные файлы",
   //   icon: <SourceIcon />,
   // },
-  {
-    name: "tests",
-    href: "/tests/list",
-    locale: "Тесты",
-    icon: <QuizIcon />,
-  },
+  // {
+  //   name: "tests",
+  //   href: "/tests/list",
+  //   locale: "Тесты",
+  //   icon: <QuizIcon />,
+  // },
   {
     name: "users",
     href: "/users/list",

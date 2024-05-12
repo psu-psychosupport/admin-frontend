@@ -37,16 +37,6 @@ export const OptionsForm = ({ formik }: { formik: FormikProps<ITestForm> }) => {
               }
               focused={index === formik.values.validOptionIndex}
             />
-            <IconButton
-              onClick={() => {
-                const options = formik.values.options!.filter(
-                  (__, ind) => ind !== index
-                );
-                formik.setValues({ ...formik.values, options });
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
             {index !== formik.values.validOptionIndex && (
               <IconButton
                 onClick={() => {
@@ -59,6 +49,17 @@ export const OptionsForm = ({ formik }: { formik: FormikProps<ITestForm> }) => {
                 <CheckIcon />
               </IconButton>
             )}
+            <IconButton
+              aria-label={"Удалить опцию"}
+              onClick={() => {
+                const options = formik.values.options!.filter(
+                  (__, ind) => ind !== index
+                );
+                formik.setValues({ ...formik.values, options });
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
           </Box>
         ))}
       <Button
