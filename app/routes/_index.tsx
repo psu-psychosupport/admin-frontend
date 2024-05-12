@@ -8,5 +8,13 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader() {
-  return redirect("/posts/list")
+  throw redirect("/posts/list")
+}
+
+export default function Index() {
+  return (
+    <Page>
+      <p>Перенаправление...</p>
+    </Page>
+  );
 }
