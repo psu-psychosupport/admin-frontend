@@ -9,6 +9,11 @@ import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { MuiProvider } from "./mui/MuiProvider";
 
+import "@fontsource/inter/300.css";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/700.css";
+
 startTransition(() => {
   hydrateRoot(
     document,
@@ -16,6 +21,6 @@ startTransition(() => {
       <MuiProvider>
         <RemixBrowser />
       </MuiProvider>
-    </StrictMode>
+    </StrictMode>,
   );
 });
