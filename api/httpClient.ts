@@ -14,9 +14,7 @@ import { ErrorResponseCodes, MediaTypes } from "./types/enums";
 import { getErrorMessage } from "../utils/texts";
 
 export const API_URL = "http://127.0.0.1:8000";
-// process.env.NODE_ENV === "production"
-//   ? "https://stoboi.damego.ru/api"
-//   : "http://127.0.0.1:8000";
+
 
 export interface IApiError {
   code: ErrorResponseCodes;
