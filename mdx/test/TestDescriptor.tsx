@@ -4,7 +4,7 @@ import React from "react";
 import DescriptorTemplate from "../DescriptorTemplate";
 
 import { ITestForm } from "~/routes/tests.add";
-import { TestFormSecond } from "~/components/testForm/TestFormSecond";
+import { TestForm } from "~/components/testForm/TestForm";
 
 interface TestDirectiveNode extends LeafDirective {
   name: "test";
@@ -36,7 +36,7 @@ const TestDirectiveDescriptor: DirectiveDescriptor<TestDirectiveNode> = {
           });
         }}
       >
-        <TestFormSecond onSubmit={onSubmit} test={mdastNode.attributes!} />
+        <TestForm onSubmit={onSubmit} test={mdastNode.attributes!} />
       </DescriptorTemplate>
     );
   },

@@ -1,7 +1,7 @@
 import { FormikProps } from "formik";
 import { TextField } from "@mui/material";
 import React from "react";
-import { ITestForm } from "~/routes/tests.add";
+import { ITestForm } from "~/types";
 
 export const InputForm = ({ formik }: { formik: FormikProps<ITestForm> }) => {
   return (

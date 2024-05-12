@@ -6,7 +6,7 @@ import {
   Delete as DeleteIcon,
 } from "@mui/icons-material";
 import React from "react";
-import { ITestForm } from "~/routes/tests.add";
+import { ITestForm } from "~/types";
 
 export const OptionsForm = ({ formik }: { formik: FormikProps<ITestForm> }) => {
   return (

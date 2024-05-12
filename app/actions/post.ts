@@ -66,10 +66,6 @@ const postAction = async (request: Request) => {
     }
   }
 
-  if (goal === "insert-test") {
-    // TODO: fetch test media
-  }
-
   return null;
 };
 
