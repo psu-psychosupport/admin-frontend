@@ -11,7 +11,7 @@ import {
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.js",
-  import.meta.url
+  import.meta.url,
 ).toString();
 
 const PresentationViewer = ({ url }: { url: string }) => {
@@ -36,7 +36,7 @@ const PresentationViewer = ({ url }: { url: string }) => {
       >
         <Page pageNumber={pageNumber} renderTextLayer={false} />
       </Document>
-      <Stack direction={"row"} justifyContent={"center"}>
+      <Stack direction={"row"} justifyContent={"center"} alignItems={"center"}>
         <IconButton onClick={toPrevPage}>
           <NavigateBeforeIcon />
         </IconButton>
