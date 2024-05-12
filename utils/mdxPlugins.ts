@@ -14,11 +14,14 @@ import {
 import EditorToolbar from "../components/toolbar/EditorToolbar";
 import { VideoDirectiveDescriptor } from "../mdx/video";
 import { AudioDirectiveDescriptor } from "../mdx/audio";
-import { apiService } from "../api/apiService";
 import { DiagramDirectiveDescriptor } from "../mdx/diagram";
-import { PdfDirectiveDescriptor, PresentationDirectiveDescriptor } from "../mdx/pdf";
+import {
+  PdfDirectiveDescriptor,
+  PresentationDirectiveDescriptor,
+} from "../mdx/pdf";
+import {FileDirectiveDescriptor} from "../mdx/file/FileDescriptor";
 
-export const mdxPlugins = [
+export const mdxPlugins = (uploadImage: (image: File) => Promise<string>) => [
   toolbarPlugin({
     toolbarContents: EditorToolbar,
   }),
@@ -30,6 +33,9 @@ export const mdxPlugins = [
   tablePlugin(),
   thematicBreakPlugin(),
   markdownShortcutPlugin(),
+  imagePlugin({
+    imageUploadHandler: uploadImage,
+  }),
   directivesPlugin({
     directiveDescriptors: [
       VideoDirectiveDescriptor,

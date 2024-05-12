@@ -6,8 +6,11 @@ import {
 } from "@remix-run/node";
 
 const uploadHandler = composeUploadHandlers(
-  createFileUploadHandler({ maxPartSize: 536_870_912 }), // 512 MB
-  createMemoryUploadHandler()
+  createFileUploadHandler({
+    maxPartSize: 536_870_912, // 512 MB
+    file: ({ filename }) => filename,
+  }),
+  createMemoryUploadHandler(),
 );
 
 const parseFormData = (request: Request) => {
