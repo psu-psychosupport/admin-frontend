@@ -163,10 +163,6 @@ class ApiService {
     return this.http.updateMedia<T>(mediaId, data);
   }
 
-  getFullFileUrl(fileUrl: string) {
-    return `${API_URL}/${fileUrl}`
-  }
-
   transformDocument(file: File) {
     return this.http.transformDocument(file);
   }

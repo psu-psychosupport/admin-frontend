@@ -60,7 +60,7 @@ const postAction = async (request: Request) => {
     if (res.data) {
       return json({
         goal,
-        url: apiService.getFullFileUrl(res.data.file_url!),
+        url: res.data.file_url,
         name: res.data.file_name,
       });
     }
