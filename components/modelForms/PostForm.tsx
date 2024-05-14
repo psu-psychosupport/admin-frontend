@@ -13,12 +13,7 @@ import { ConfirmDocumentInsertModal } from "./ConfirmDocumentInsertModal";
 import { InputDocumentFile } from "./InputDocumentFile";
 import useFetcherAsync from "~/hooks/useFetcherAsync";
 import { IApiResponse } from "../../api/httpClient";
-
-interface IActionResponse {
-  goal: "category-select" | "convert-document";
-  postFound?: IPost;
-  text?: string;
-}
+import { useNavigate } from "@remix-run/react";
 
 export default function PostForm({
   category,
@@ -30,6 +25,7 @@ export default function PostForm({
   post?: IPost;
 }) {
   const fetcher = useFetcherAsync<IApiResponse<any>>();
+  const navigate = useNavigate();
 
   const [content, setContent] = useState<string>(post?.content || "");
   const [modalIsOpened, setModalOpened] = useState(false);
@@ -66,6 +62,9 @@ export default function PostForm({
       toast.error(res.error.message);
     } else {
       toast.success("Сохранено!");
+      if (!post) {
+        navigate(`/categories/list/`);
+      }
     }
   };
 
