@@ -12,7 +12,7 @@ import { ShowPostInfo } from "./ShowPostInfo";
 import { ConfirmDocumentInsertModal } from "./ConfirmDocumentInsertModal";
 import { InputDocumentFile } from "./InputDocumentFile";
 import useFetcherAsync from "~/hooks/useFetcherAsync";
-import {IApiResponse} from "../../api/httpClient";
+import { IApiResponse } from "../../api/httpClient";
 
 interface IActionResponse {
   goal: "category-select" | "convert-document";
@@ -29,7 +29,7 @@ export default function PostForm({
   subcategory?: ISubCategory;
   post?: IPost;
 }) {
-  const fetcher = useFetcherAsync<IActionResponse>();
+  const fetcher = useFetcherAsync<IApiResponse<any>>();
 
   const [content, setContent] = useState<string>(post?.content || "");
   const [modalIsOpened, setModalOpened] = useState(false);
@@ -58,11 +58,15 @@ export default function PostForm({
       };
     }
 
-    const data = await fetcher.submit(payload, {
+    const res = await fetcher.submit(payload, {
       method: "POST",
       encType: "application/json",
     });
-    toast.success("Сохранено!");
+    if (res?.error) {
+      toast.error(res.error.message);
+    } else {
+      toast.success("Сохранено!");
+    }
   };
 
   const selectDocumentFile = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -93,7 +97,11 @@ export default function PostForm({
     <Stack sx={{ gap: 2, marginY: "5vh" }}>
       {(post || category || subcategory) && (
         <>
-          <ShowPostInfo post={post} category={category} subcategory={subcategory} />
+          <ShowPostInfo
+            post={post}
+            category={category}
+            subcategory={subcategory}
+          />
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button
               component={"label"}
