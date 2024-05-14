@@ -8,7 +8,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader() {
-  throw redirect("/posts/list")
+  throw redirect("/categories/list")
 }
 
 export default function Index() {

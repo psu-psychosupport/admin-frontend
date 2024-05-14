@@ -11,18 +11,18 @@ const Header = () => {
         display: "flex",
         justifyContent: "space-between",
         borderBottom: 2,
+        alignItems: "center",
       }}
     >
-      <img src={"/admin/logo.svg"} />
+      <Link to={"/"} style={{ height: "80%" }}>
+        <img src={"/admin/logo.svg"} height={"100%"} />
+      </Link>
+
       <Link
         to={"https://stoboi.damego.ru"}
         style={{ padding: "1%", textDecoration: "none" }}
       >
-        <Typography
-          color={"primary.contrastText"}
-          variant={"h6"}
-          sx={{ justifySelf: "end" }}
-        >
+        <Typography color={"primary.contrastText"} variant={"h6"}>
           Выйти
         </Typography>
       </Link>

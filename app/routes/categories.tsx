@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import {MetaFunction,} from "@remix-run/node";
 import React from "react";
 
 import { Outlet } from "@remix-run/react";

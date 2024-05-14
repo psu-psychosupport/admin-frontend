@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
+  colors,
   IconButton,
   Stack,
   TextField,
@@ -17,6 +18,8 @@ import {
 } from "@mui/icons-material";
 import { SubCategoryItem } from "~/components/SubCategoryItem";
 import { useFetcher } from "@remix-run/react";
+import { LinkWrapper } from "~/components/LinkWrapper";
+import Indicator from "~/components/Indicator";
 
 const CreateSubcategory = ({ category }: { category: ICategory }) => {
   const fetcher = useFetcher();
@@ -73,7 +76,13 @@ const CreateSubcategory = ({ category }: { category: ICategory }) => {
 const DELETE_CATEGORY_TEXT =
   "Вы уверены, что хотите удалить эту категорию? Удаление может привести к удалению подкатегорий и скрытию постов";
 
-export function CategoryItem({ category }: { category: ICategory }) {
+export function CategoryItem({
+  category,
+  isEditingMode,
+}: {
+  category: ICategory;
+  isEditingMode: boolean;
+}) {
   const fetcher = useFetcher();
 
   const [isEditing, setEditing] = useState(false);
@@ -133,17 +142,28 @@ export function CategoryItem({ category }: { category: ICategory }) {
             onChange={(event) => setName(event.target.value)}
           />
         ) : (
-          <Typography variant={"body1"} fontSize={24}>
-            {category.name}
-          </Typography>
+          <Stack direction={"row"} alignItems={"center"} gap={1}>
+            {!category.subcategories.length && (
+              <Indicator
+                color={category.post ? colors.green[800] : colors.red[900]}
+              />
+            )}
+            <LinkWrapper category={category}>
+              <Typography variant={"h5"} fontWeight={"500"}>
+                {category.name}
+              </Typography>
+            </LinkWrapper>
+          </Stack>
         )}
-        <ItemMenu
-          isEditing={isEditing}
-          onRequestEdit={handleEdit}
-          onRequestDelete={handleRequestDelete}
-          onSubmit={handleSubmit}
-          onCancel={handleClose}
-        />
+        {isEditingMode && (
+          <ItemMenu
+            isEditing={isEditing}
+            onRequestEdit={handleEdit}
+            onRequestDelete={handleRequestDelete}
+            onSubmit={handleSubmit}
+            onCancel={handleClose}
+          />
+        )}
         <ConfirmDeleteDialog
           isOpen={isModalOpened}
           onClose={closeModal}
@@ -153,10 +173,14 @@ export function CategoryItem({ category }: { category: ICategory }) {
       </Box>
       <Stack ml={2}>
         {category.subcategories.map((subcategory) => (
-          <SubCategoryItem subcategory={subcategory} key={subcategory.id} />
+          <SubCategoryItem
+            subcategory={subcategory}
+            isEditingMode={isEditingMode}
+            key={subcategory.id}
+          />
         ))}
 
-        <CreateSubcategory category={category} />
+        {isEditingMode && <CreateSubcategory category={category} />}
       </Stack>
     </Box>
   );

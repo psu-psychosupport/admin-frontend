@@ -25,7 +25,7 @@ export async function action({ request }: ActionFunctionArgs) {
   session.set("access_token", tokens.data?.access_token);
   session.set("refresh_token", tokens.data?.refresh_token);
 
-  return redirect("/posts/list", {
+  return redirect("/categories/list", {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session),
     },

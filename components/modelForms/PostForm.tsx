@@ -1,18 +1,18 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useRef, useState } from "react";
 
 import { ClientOnly } from "remix-utils/client-only";
 import { Box, Button, colors, Stack, Typography } from "@mui/material";
 import { CloudUpload as CloudUploadIcon } from "@mui/icons-material";
 import Editor from "../../components/Editor";
 
-import { ICategory, IPost } from "../../api/types/content";
+import { ICategory, IPost, ISubCategory } from "../../api/types/content";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { toast } from "react-toastify";
-import { useFetcher } from "@remix-run/react";
-import { ISelectPost, SelectCategory } from "./SelectCategory";
 import { ShowPostInfo } from "./ShowPostInfo";
 import { ConfirmDocumentInsertModal } from "./ConfirmDocumentInsertModal";
 import { InputDocumentFile } from "./InputDocumentFile";
+import useFetcherAsync from "~/hooks/useFetcherAsync";
+import {IApiResponse} from "../../api/httpClient";
 
 interface IActionResponse {
   goal: "category-select" | "convert-document";
@@ -21,40 +21,22 @@ interface IActionResponse {
 }
 
 export default function PostForm({
-  categories,
+  category,
+  subcategory,
   post,
 }: {
-  categories?: ICategory[];
+  category?: ICategory;
+  subcategory?: ISubCategory;
   post?: IPost;
 }) {
-  const fetcher = useFetcher();
+  const fetcher = useFetcherAsync<IActionResponse>();
 
-  const [newPostPayload, setNewPostPayload] = useState<ISelectPost>();
   const [content, setContent] = useState<string>(post?.content || "");
   const [modalIsOpened, setModalOpened] = useState(false);
   const [modalIsShowed, setModalIsShowed] = useState(false);
   const editorRef = useRef<MDXEditorMethods>();
 
-  useEffect(() => {
-    if (!fetcher.data) {
-      return;
-    }
-    const data = fetcher.data as IActionResponse;
-    const { goal } = data;
-
-    if (goal === "convert-document") {
-      const text = data.text!;
-      setContent(text);
-      editorRef.current?.setMarkdown(text);
-      toast.success("Текст загружен", { position: "bottom-right" });
-    } else if (goal === "category-select" && data.postFound) {
-      const $post = data.postFound!;
-      setContent($post.content);
-      editorRef.current!.setMarkdown($post.content);
-    }
-  }, [fetcher.data]);
-
-  const submit = () => {
+  const submit = async () => {
     let payload;
 
     if (post) {
@@ -69,28 +51,18 @@ export default function PostForm({
       payload = {
         goal: "add-post",
         post: {
-          category_id: newPostPayload!.categoryId,
-          subcategory_id: newPostPayload!.subcategoryId
-            ? newPostPayload?.subcategoryId
-            : undefined,
+          category_id: category!.id,
+          subcategory_id: subcategory?.id,
           content,
         },
       };
     }
 
-    fetcher.submit(payload, { method: "POST", encType: "application/json" });
-  };
-
-  const handleCategorySelect = async (data: ISelectPost) => {
-    fetcher.submit(
-      // @ts-ignore
-      {
-        goal: "category-select",
-        post: data,
-      },
-      { method: "POST", encType: "application/json" },
-    );
-    setNewPostPayload(data);
+    const data = await fetcher.submit(payload, {
+      method: "POST",
+      encType: "application/json",
+    });
+    toast.success("Сохранено!");
   };
 
   const selectDocumentFile = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -98,10 +70,18 @@ export default function PostForm({
     const formData = new FormData();
     formData.append("file", file);
     formData.append("goal", "convert-document");
-    fetcher.submit(formData, {
+    const res: IApiResponse<string> = await fetcher.submit(formData, {
       method: "POST",
       encType: "multipart/form-data",
     });
+    if (res.error) {
+      toast.error(res.error.message);
+      return;
+    }
+    const text = res.data!;
+    setContent(text);
+    editorRef.current?.setMarkdown(text);
+    toast.success("Текст загружен");
   };
 
   const closeModal = () => {
@@ -111,15 +91,9 @@ export default function PostForm({
 
   return (
     <Stack sx={{ gap: 2, marginY: "5vh" }}>
-      {!post && (
-        <SelectCategory
-          categories={categories!}
-          onSelect={handleCategorySelect}
-        />
-      )}
-      {post && <ShowPostInfo post={post} />}
-      {(post || newPostPayload) && (
+      {(post || category || subcategory) && (
         <>
+          <ShowPostInfo post={post} category={category} subcategory={subcategory} />
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button
               component={"label"}
@@ -138,7 +112,7 @@ export default function PostForm({
               )}
             </Button>
           </Box>
-              
+
           <ClientOnly
             fallback={
               <Box>
@@ -165,7 +139,7 @@ export default function PostForm({
             )}
           </ClientOnly>
         </>
-       )}
+      )}
 
       {!!content.length && (
         <Button onClick={submit} variant={"contained"}>

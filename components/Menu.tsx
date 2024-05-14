@@ -15,12 +15,12 @@ interface IRoute {
 }
 
 const routes: IRoute[] = [
-  {
-    name: "posts",
-    href: "/posts/list",
-    locale: "Посты",
-    icon: <PostAddIcon />,
-  },
+  // {
+  //   name: "posts",
+  //   href: "/posts/list",
+  //   locale: "Посты",
+  //   icon: <PostAddIcon />,
+  // },
   {
     name: "categories",
     href: "/categories/list",

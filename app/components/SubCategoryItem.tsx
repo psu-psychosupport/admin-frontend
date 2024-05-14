@@ -1,17 +1,21 @@
 import { ISubCategory } from "../../api/types/content";
 import React, { useState } from "react";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, colors, Stack, TextField, Typography } from "@mui/material";
 import { ItemMenu } from "~/components/ItemMenu";
 import ConfirmDeleteDialog from "~/components/ConfirmDeleteDialog";
 import { useFetcher } from "@remix-run/react";
+import { LinkWrapper } from "~/components/LinkWrapper";
+import Indicator from "~/components/Indicator";
 
 const DELETE_SUBCATEGORY_TEXT =
   "Вы уверены, что хотите удалить эту подкатегорию? Удаление может привести к скрытию поста";
 
 export function SubCategoryItem({
   subcategory,
+  isEditingMode,
 }: {
   subcategory: ISubCategory;
+  isEditingMode: boolean;
 }) {
   const fetcher = useFetcher();
 
@@ -72,16 +76,27 @@ export function SubCategoryItem({
           onChange={(event) => setName(event.target.value)}
         />
       ) : (
-        <Typography variant={"body1"}>· {subcategory.name}</Typography>
+        <Stack direction={"row"} alignItems={"center"} gap={1}>
+          <Indicator
+            color={subcategory.post ? colors.green[800] : colors.red[900]}
+          />
+          <Typography variant={"h6"} fontWeight={"400"}>
+            <LinkWrapper subcategory={subcategory}>
+              {subcategory.name}
+            </LinkWrapper>
+          </Typography>
+        </Stack>
       )}
 
-      <ItemMenu
-        isEditing={isEditing}
-        onRequestEdit={handleEdit}
-        onRequestDelete={handleRequestDelete}
-        onSubmit={handleSubmit}
-        onCancel={handleClose}
-      />
+      {isEditingMode && (
+        <ItemMenu
+          isEditing={isEditing}
+          onRequestEdit={handleEdit}
+          onRequestDelete={handleRequestDelete}
+          onSubmit={handleSubmit}
+          onCancel={handleClose}
+        />
+      )}
       <ConfirmDeleteDialog
         isOpen={isModalOpened}
         onClose={closeModal}

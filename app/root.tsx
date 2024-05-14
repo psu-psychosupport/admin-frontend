@@ -6,6 +6,7 @@ import {
   ScrollRestoration,
   isRouteErrorResponse,
   useRouteError,
+  useNavigate,
 } from "@remix-run/react";
 
 import { getMuiLinks } from "./mui/getMuiLinks";
@@ -18,6 +19,7 @@ import { apiService } from "../api/apiService";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { sessionStorage } from "~/sessions";
+import { Box, Button, Typography } from "@mui/material";
 
 export const links: LinksFunction = () => [...getMuiLinks()];
 
@@ -61,7 +63,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
         <ScrollRestoration />
         <Scripts />
-        <ToastContainer />
+        <ToastContainer position={"bottom-right"} />
       </body>
     </html>
   );
@@ -79,6 +81,7 @@ export default function App() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
+  const navigate = useNavigate();
 
   if (isRouteErrorResponse(error)) {
     switch (error.status) {
@@ -90,7 +93,16 @@ export function ErrorBoundary() {
           </div>
         );
       case 404:
-        return <div>Invoice not found!</div>;
+        return (
+          <Box>
+            <Typography variant={"h2"}>
+              Похоже, что страница на которую вы зашли не существует
+            </Typography>
+            <Button variant={"outlined"} onClick={() => navigate("/")}>
+              Вернуться на главную
+            </Button>
+          </Box>
+        );
     }
 
     return (

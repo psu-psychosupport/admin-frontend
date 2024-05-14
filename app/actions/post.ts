@@ -20,18 +20,21 @@ const postAction = async (request: Request) => {
 
   if (goal === "add-post") {
     const post: IFormPost = payload.post;
-    await apiService.createPost(post);
-    throw redirect("/posts/list");
-  } else if (goal === "edit-post") {
+    const res = await apiService.createPost(post);
+    return json(res);
+  }
+  else if (goal === "edit-post") {
     const $post = payload.post as IFormPost;
     const postId = payload.postId as number;
     const res = await apiService.updatePost(postId, $post);
-    if (res.data) throw redirect("/posts/list");
-  } else if (goal === "convert-document") {
+    return json(res);
+  }
+  else if (goal === "convert-document") {
     const file: File = payload.get("file");
     const res = await apiService.transformDocument(file);
-    return json({ goal, text: res.data });
-  } else if (goal === "category-select") {
+    return json(res);
+  }
+  else if (goal === "category-select") {
     const post: ISelectPost = payload.post;
     const res = await apiService.getPost(post);
     return json({ goal, postFound: res.data });
@@ -39,7 +42,7 @@ const postAction = async (request: Request) => {
   else if (goal === "request-test") {
     const mediaId = payload.mediaId;
     const res = await apiService.getMedia(mediaId);
-    return json({goal, data: res.data});
+    return json({ goal, data: res.data });
   }
 
   const goalToType = {

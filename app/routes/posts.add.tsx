@@ -1,4 +1,9 @@
-import { ActionFunctionArgs, json, MetaFunction } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  json,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "@remix-run/node";
 import "@mdxeditor/editor/style.css";
 import React from "react";
 
@@ -12,10 +17,30 @@ export const meta: MetaFunction = () => {
   return [{ title: "Посты" }];
 };
 
-export async function loader() {
-  const res = await apiService.getCategories();
-  if (res.error) return json([]);
-  return json(res.data);
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const category_id = url.searchParams.get("category_id");
+  const subcategory_id = url.searchParams.get("subcategory_id");
+
+  if (subcategory_id) {
+    const res = await apiService.getSubcategory(
+      Number.parseInt(subcategory_id),
+    );
+    if (res.data)
+      return json({
+        category: res.data.category,
+        subcategory: res.data,
+      });
+  } else if (category_id) {
+    const res = await apiService.getCategory(Number.parseInt(category_id));
+    if (res.data) {
+      return json({
+        category: res.data,
+      });
+    }
+  }
+
+  return {};
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -23,17 +48,14 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function PanelCreatePostRoute() {
-  const categories = useLoaderData<typeof loader>();
+  const { category, subcategory } = useLoaderData<typeof loader>();
 
-  if (!categories || !categories.length) {
-    return <Typography variant={"h2"}>Нет доступных категорий</Typography>;
-  }
   return (
     <Container sx={{ width: "100%" }}>
       <Typography variant={"h4"} fontWeight={"800"}>
         Добавление нового поста
       </Typography>
-      <PostForm categories={categories} />
+      <PostForm category={category} subcategory={subcategory} />
     </Container>
   );
 }

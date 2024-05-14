@@ -1,15 +1,15 @@
 import { ActionFunctionArgs, json } from "@remix-run/node";
-import React from "react";
+import React, { useState } from "react";
 
 import { apiService } from "../../api/apiService";
-import { useLoaderData } from "@remix-run/react";
-import { Container, Stack } from "@mui/material";
-import { TableHeader } from "../../components/ModelTable";
+import { useLoaderData, useNavigate } from "@remix-run/react";
+import { Button, Container, Stack, Typography } from "@mui/material";
 import { CategoryItem } from "~/components/CategoryItem";
 import {
   IUpdateCategory,
   IUpdateSubCategory,
 } from "../../components/modelForms/types";
+import { Add as AddIcon, Edit as EditIcon } from "@mui/icons-material";
 
 export async function loader() {
   const res = await apiService.getCategories();
@@ -51,15 +51,63 @@ export async function action({ request }: ActionFunctionArgs) {
   return null;
 }
 
+export const Header = ({
+  isEditingMode,
+  onToggle,
+}: {
+  isEditingMode: boolean;
+  onToggle: () => void;
+}) => {
+  const navigate = useNavigate();
+
+  return (
+    <Stack
+      justifyContent={"space-between"}
+      sx={{ marginBottom: "2%" }}
+      direction={"row"}
+    >
+      <Typography variant={"h4"} fontWeight={"800"}>
+        Все категории
+      </Typography>
+      <Stack alignSelf={"flex-end"} direction={"row"} gap={1}>
+        <Button
+          variant={"contained"}
+          color={"primary"}
+          onClick={() => navigate(`/categories/add`)}
+          startIcon={<AddIcon />}
+        >
+          Добавить
+        </Button>
+        <Button
+          variant={"outlined"}
+          color={"primary"}
+          onClick={onToggle}
+          startIcon={<EditIcon />}
+        >
+          {!isEditingMode ? "Изменить" : "Выйти"}
+        </Button>
+      </Stack>
+    </Stack>
+  );
+};
+
 export default function CategoriesAddRoute() {
   const categories = useLoaderData<typeof loader>();
+  const [isEditingMode, setEditingMode] = useState(false);
 
   return (
     <Container sx={{ width: "50vw" }} maxWidth={"lg"}>
-      <TableHeader route={"categories"} title={"Категории"} />
+      <Header
+        isEditingMode={isEditingMode}
+        onToggle={() => setEditingMode((prev) => !prev)}
+      />
       <Stack>
         {categories.map((category) => (
-          <CategoryItem category={category} key={category.id} />
+          <CategoryItem
+            category={category}
+            key={category.id}
+            isEditingMode={isEditingMode}
+          />
         ))}
       </Stack>
     </Container>

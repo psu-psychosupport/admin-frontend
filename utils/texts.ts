@@ -14,6 +14,8 @@ export const errorMessages = {
     "Вы уже подтвердили свою учётную запись",
   [ErrorResponseCodes.USER_NOT_FOUND]: "Пользователь не найден",
   [ErrorResponseCodes.UNSUPPORTED_FILE_TYPE]: "Неподдерживаемый тип файла",
+  [ErrorResponseCodes.INCORRECT_DOCUMENT_FILE]:
+    "Содержимое документа не поддерживается",
   [ErrorResponseCodes.CATEGORY_NOT_FOUND]: "Категория не найдена",
   [ErrorResponseCodes.SUBCATEGORY_NOT_FOUND]: "Подкатегория не найдена",
   [ErrorResponseCodes.POST_NOT_FOUND]: "Пост не найден",
