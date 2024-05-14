@@ -34,16 +34,9 @@ const postAction = async (request: Request) => {
     const res = await apiService.transformDocument(file);
     return json(res);
   }
-  else if (goal === "category-select") {
-    const post: ISelectPost = payload.post;
-    const res = await apiService.getPost(post);
-    return json({ goal, postFound: res.data });
-  }
-  else if (goal === "request-test") {
-    const mediaId = payload.mediaId;
-    const res = await apiService.getMedia(mediaId);
-    return json({ goal, data: res.data });
-  }
+
+  // Загрузка файлов
+  // TODO: Может и не стоит такую дичь оставлять?
 
   const goalToType = {
     "insert-audio": MediaTypes.AUDIO,
@@ -53,7 +46,6 @@ const postAction = async (request: Request) => {
     "insert-presentation": MediaTypes.PRESENTATION,
     "insert-pdf": MediaTypes.PDF,
   };
-
   if (goalToType[goal] !== undefined) {
     const file: File = payload.get("file");
     const res = await apiService.uploadMedia({
