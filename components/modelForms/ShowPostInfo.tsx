@@ -31,7 +31,7 @@ export const getSubcategoryName = ({
   subcategory?: ISubCategory;
 }) => {
   let name;
-  if (post) {
+  if (post && post.subcategory) {
     name = post.subcategory.name;
   } else if (subcategory) {
     name = subcategory.name;
