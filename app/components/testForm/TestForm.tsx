@@ -28,10 +28,6 @@ const validationSchema = yup.object({
     .of(yup.string().trim().required("Вариант ответа не может быть пустым")),
 });
 
-const normalizeOptions = (options: string) => {
-  return options.split(",");
-};
-
 export function TestForm({
   onSubmit,
   test,
@@ -43,12 +39,8 @@ export function TestForm({
     initialValues: {
       title: test?.title ?? "",
       type: test?.type ?? TestTypes.OPTIONS,
-      options: !test?.options
-        ? undefined
-        : normalizeOptions(test.options as unknown as string), // mdast конвертирует массив в строку, поэтому конвертируем обратно
-      validOptionIndex:
-        Number.parseInt(test?.validOptionIndex as unknown as string) ??
-        undefined, // То же для числа
+      options: test?.options, // mdast конвертирует массив в строку, поэтому конвертируем обратно
+      validOptionIndex: test?.validOptionIndex ?? undefined, // То же для числа
       validTextInput: test?.validTextInput ?? undefined,
     },
     onSubmit,
@@ -95,7 +87,9 @@ export function TestForm({
           </Typography>
 
           <Stack>
-            <Typography variant={"body2"}>Тест необходимо сохранить ДО сохранения поста</Typography>
+            <Typography variant={"body2"}>
+              Тест необходимо сохранить ДО сохранения поста
+            </Typography>
             <Button
               sx={{ marginTop: 4 }}
               color={"primary"}

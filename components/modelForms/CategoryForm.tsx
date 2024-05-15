@@ -57,6 +57,8 @@ const CategoryForm = () => {
     },
     validationSchema,
     onSubmit: (data) => {
+      data.subcategories = data.subcategories.filter((sub) => sub.length);
+
       fetcher.submit(
         { category: data },
         { method: "POST", encType: "application/json" },

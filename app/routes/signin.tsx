@@ -8,22 +8,30 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { apiService } from "../../api/apiService";
-import { Form, useNavigate } from "@remix-run/react";
-import { ActionFunctionArgs, redirect } from "@remix-run/node";
+import { Form, useActionData } from "@remix-run/react";
+import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { sessionStorage } from "~/sessions";
+import { toast } from "react-toastify";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
 
+  // idk why yup's "required" is fucked up
+  if (!email || !password) {
+    return json({message: "Вы не ввели логин или пароль"})
+  }
+
   const session = await sessionStorage.getSession(request.headers.get("cookie"));
 
-  const tokens = await apiService.signIn(email, password);
-  session.set("access_token", tokens.data?.access_token);
-  session.set("refresh_token", tokens.data?.refresh_token);
+  const res = await apiService.signIn(email, password);
+  if (res.error) return json(res.error);
+
+  session.set("access_token", res.data!.access_token);
+  session.set("refresh_token", res.data!.refresh_token);
 
   return redirect("/categories/list", {
     headers: {
@@ -44,22 +52,13 @@ const validationSchema = yup.object({
 });
 
 export default function SignInRoute() {
-  const navigate = useNavigate();
-  // const onSubmit = async ({
-  //   email,
-  //   password,
-  // }: {
-  //   email: string;
-  //   password: string;
-  // }) => {
-  //   const res = await apiService.signIn(email, password);
-  //   if (res.error) {
-  //     await formik.setTouched({ email: true }, false);
-  //     formik.setErrors({ email: getErrorMessage(errorCode) });
-  //   } else {
-  //     navigate("/categories/list");
-  //   }
-  // };
+  const error = useActionData<typeof action>();
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message);
+    } 
+  }, [error])
 
   const formik = useFormik({
     initialValues: {

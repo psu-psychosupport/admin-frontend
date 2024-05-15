@@ -13,6 +13,7 @@ export const errorMessages = {
   [ErrorResponseCodes.USER_ALREADY_VERIFIED]:
     "Вы уже подтвердили свою учётную запись",
   [ErrorResponseCodes.USER_NOT_FOUND]: "Пользователь не найден",
+  [ErrorResponseCodes.MISSING_PERMISSIONS]: "Это действие доступно только администраторам",
   [ErrorResponseCodes.UNSUPPORTED_FILE_TYPE]: "Неподдерживаемый тип файла",
   [ErrorResponseCodes.INCORRECT_DOCUMENT_FILE]:
     "Содержимое документа не поддерживается",

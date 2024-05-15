@@ -13,7 +13,7 @@ export const LinkWrapper = ({
 }) => {
   let href;
   if (category) {
-    if (category.subcategories.length) {
+    if (category.subcategories?.length) {
       return children;
     }
     href = category.post

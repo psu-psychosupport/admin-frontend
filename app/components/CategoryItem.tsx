@@ -28,6 +28,8 @@ const CreateSubcategory = ({ category }: { category: ICategory }) => {
   const [isEditing, setEditing] = useState(false);
 
   const submit = () => {
+    if (!name.length) return;
+
     const payload = {
       goal: "add-subcategory",
       subcategory: {
@@ -143,7 +145,7 @@ export function CategoryItem({
           />
         ) : (
           <Stack direction={"row"} alignItems={"center"} gap={1}>
-            {!category.subcategories.length && (
+            {!category.subcategories?.length && (
               <Indicator
                 color={category.post ? colors.green[800] : colors.red[900]}
               />
@@ -172,7 +174,7 @@ export function CategoryItem({
         />
       </Box>
       <Stack ml={2}>
-        {category.subcategories.map((subcategory) => (
+        {category.subcategories && category.subcategories.map((subcategory) => (
           <SubCategoryItem
             subcategory={subcategory}
             isEditingMode={isEditingMode}

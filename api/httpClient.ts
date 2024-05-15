@@ -134,7 +134,7 @@ export default class HttpClient {
     const res = await this.request<{
       access_token: string;
       refresh_token: string;
-    }>("POST", "/signin", { data: form });
+    }>("POST", "/signin?as_admin=true", { data: form });
 
     if (res.data) {
       this.accessToken = res.data.access_token;
@@ -195,7 +195,7 @@ export default class HttpClient {
     return this.request<null>("DELETE", `/categories/${categoryId}`);
   }
 
-  getSubCategories() {
+  getSubCategories() { // TODO: ? category not needed?
     return this.request<ISubCategory[]>("GET", "/subcategories");
   }
 
