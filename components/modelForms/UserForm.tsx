@@ -13,7 +13,10 @@ import React from "react";
 import * as yup from "yup";
 import { IUser } from "../../api/types/users";
 import { userHasPermission, UserPermissions } from "../../api/types/enums";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher, useNavigate } from "@remix-run/react";
+import useFetcherAsync from "~/hooks/useFetcherAsync";
+import { toast } from "react-toastify";
+import { IApiResponse } from "api/httpClient";
 
 const validationSchema = yup.object({
   email: yup
@@ -28,7 +31,8 @@ const validationSchema = yup.object({
 });
 
 const UserForm = ({ user }: { user?: IUser }) => {
-  const fetcher = useFetcher();
+  const fetcher = useFetcherAsync<IApiResponse<null>>();
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -38,14 +42,21 @@ const UserForm = ({ user }: { user?: IUser }) => {
       permissions: [],
     },
     validationSchema,
-    onSubmit: ({ name, email, password, permissions }) => {
+    onSubmit: async ({ name, email, password, permissions }) => {
       const user = {
         name,
         email,
         password,
         permissions: permissions.reduce((acc, sum) => sum + acc, 0),
       };
-      fetcher.submit({ user }, { method: "POST", encType: "application/json" });
+      const res = await fetcher.submit({ user }, { method: "POST", encType: "application/json" });
+      if (!res.error) {
+        toast.success("Пользователь добавлен!");
+        navigate("/users/list");
+      }
+      else {
+        toast.error(res.error.message);
+      }
     },
   });
 
