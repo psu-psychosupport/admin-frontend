@@ -51,7 +51,7 @@ const UserForm = ({ user }: { user?: IUser }) => {
       };
       const res = await fetcher.submit({ user }, { method: "POST", encType: "application/json" });
       if (!res.error) {
-        toast.success("Пользователь добавлен!");
+        toast.success(`Пользователь ${user ? "добавлен!" : "сохранён!"}`);
         navigate("/users/list");
       }
       else {
@@ -126,7 +126,7 @@ const UserForm = ({ user }: { user?: IUser }) => {
             variant={"contained"}
             type="submit"
           >
-            Создать
+            {user ? "Сохранить" : "Создать"}
           </Button>
         </Stack>
       </form>
