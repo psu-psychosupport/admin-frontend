@@ -24,6 +24,7 @@ import DiagramButton from "./DiagramButton";
 import InsertPresentation from "./PresentationButton";
 import FileButton from "./FileButton";
 import InsertTest from "./TestButton";
+import PdfButton from "./PdfButton";
 
 function whenInAdmonition(editorInFocus: EditorInFocus | null) {
   const node = editorInFocus?.rootNode;
@@ -70,6 +71,7 @@ const EditorToolbar = () => {
                 <VideoButton />
                 <DiagramButton />
                 <FileButton />
+                <PdfButton />
                 <InsertPresentation />
                 <InsertTest />
 
