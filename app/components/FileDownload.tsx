@@ -4,8 +4,6 @@ import {
   Box,
   Stack,
   SvgIconOwnProps,
-  Theme,
-  SxProps,
 } from "@mui/material";
 import {
   AudioFile,
@@ -16,7 +14,6 @@ import {
   PermMedia,
   Description,
 } from "@mui/icons-material";
-import { Link } from "@remix-run/react";
 
 const iconSize = 56;
 
@@ -66,7 +63,7 @@ const FileDownload = ({ name, url }: { name: string; url: string }) => {
   const icon = getFileIcon(fileType);
 
   return (
-    <Link to={url} style={{ textDecoration: "none", color: "inherit" }}>
+    <a href={url} style={{ textDecoration: "none", color: "inherit" }}>
       <Box
         sx={{
           bgcolor: `primary.card`,
@@ -95,7 +92,7 @@ const FileDownload = ({ name, url }: { name: string; url: string }) => {
           />
         </Stack>
       </Box>
-    </Link>
+    </a>
   );
 };
 
