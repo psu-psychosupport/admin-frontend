@@ -11,7 +11,7 @@ import {
 
 import { getMuiLinks } from "./mui/getMuiLinks";
 import { MuiMeta } from "./mui/MuiMeta";
-import { LinksFunction, LoaderFunctionArgs, redirect } from "@remix-run/node";
+import { LinksFunction, LoaderFunctionArgs, redirect, redirectDocument } from "@remix-run/node";
 import { MuiDocument } from "./mui/MuiDocument";
 import React from "react";
 import Header from "./components/Header";
@@ -45,6 +45,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     headers.append("Set-Cookie", await sessionStorage.commitSession(session));
     throw redirect(request.url, { headers });
   }
+
+  if ((response.data?.permissions! & 1) !== 1) {
+    return redirectDocument("https://stoboi.damego.ru/") // TODO: FUCK IT
+  }
+
   return null;
 }
 
