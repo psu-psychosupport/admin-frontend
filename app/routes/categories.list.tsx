@@ -67,7 +67,7 @@ export const Header = ({
       direction={"row"}
     >
       <Typography variant={"h4"} fontWeight={"800"}>
-        Все категории
+        Все разделы
       </Typography>
       <Stack alignSelf={"flex-end"} direction={"row"} gap={1}>
         <Button

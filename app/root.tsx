@@ -20,6 +20,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { sessionStorage } from "~/sessions";
 import { Box, Button, Typography } from "@mui/material";
+import "./styles/global.css";
 
 export const links: LinksFunction = () => [...getMuiLinks()];
 

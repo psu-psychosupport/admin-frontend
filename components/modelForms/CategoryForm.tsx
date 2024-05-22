@@ -35,7 +35,7 @@ const Subcategory = ({
       }}
     >
       <TextField
-        label={"Название подкатегории"}
+        label={"Название темы"}
         fullWidth
         value={name}
         onChange={(event) => onChange(event.target.value)}
@@ -69,14 +69,14 @@ const CategoryForm = () => {
   return (
     <Box sx={{ width: "50vw" }}>
       <Typography variant={"h4"} fontWeight={"800"} sx={{ marginBottom: 2 }}>
-        Создание категории
+        Создание раздела
       </Typography>
       <form onSubmit={formik.handleSubmit}>
         <Stack spacing={2}>
           <TextField
             name={"name"}
             id={"name"}
-            label={"Название категории"}
+            label={"Название раздела"}
             value={formik.values.name}
             onChange={formik.handleChange}
             error={formik.touched.name && Boolean(formik.errors.name)}
@@ -84,7 +84,7 @@ const CategoryForm = () => {
           />
 
           <Typography variant={"h5"} fontWeight={"600"}>
-            Подкатегории
+            Темы раздела
           </Typography>
 
           {formik.values.subcategories.map((subcategory, index) => (
@@ -114,7 +114,7 @@ const CategoryForm = () => {
               })
             }
           >
-            Добавить подкатегорию
+            Добавить тему
           </Button>
 
           <Button

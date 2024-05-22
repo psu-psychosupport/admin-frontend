@@ -41,12 +41,12 @@ export function SelectCategory({
   return (
     <>
       <FormControl fullWidth>
-        <InputLabel id="select-category-label">Категория</InputLabel>
+        <InputLabel id="select-category-label">Раздел</InputLabel>
         <Select
           labelId="select-category-label"
           id="select-category"
           value={category ? category.id.toString() : ""}
-          label="Категория"
+          label="Раздел"
           onChange={handleChange}
         >
           {categories.map((category) => (
@@ -58,12 +58,12 @@ export function SelectCategory({
       </FormControl>
       {!!category && !!category.subcategories.length && (
         <FormControl fullWidth>
-          <InputLabel id="select-subcategory-label">Подкатегория</InputLabel>
+          <InputLabel id="select-subcategory-label">Тема раздела</InputLabel>
           <Select
             labelId="select-subcategory-label"
             id="select-subcategory"
             value={subcategory || ""}
-            label="Подкатегория"
+            label="Тема раздела"
             onChange={handleSubcategoryChange}
           >
             {category.subcategories.map((subc) => (

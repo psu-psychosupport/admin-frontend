@@ -71,7 +71,7 @@ const EditorToolbar = () => {
                 <VideoButton />
                 <DiagramButton />
                 <FileButton />
-                <PdfButton />
+                {/* <PdfButton /> */}
                 <InsertPresentation />
                 <InsertTest />
 

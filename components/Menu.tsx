@@ -24,7 +24,7 @@ const routes: IRoute[] = [
   {
     name: "categories",
     href: "/categories/list",
-    locale: "Категории",
+    locale: "Разделы",
     icon: <CategoryIcon />,
   },
   {

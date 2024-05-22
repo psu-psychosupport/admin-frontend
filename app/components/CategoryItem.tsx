@@ -51,7 +51,7 @@ const CreateSubcategory = ({ category }: { category: ICategory }) => {
       <Stack direction={"row"}>
         <TextField
           fullWidth
-          label={"Название подкатегории"}
+          label={"Название темы"}
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
@@ -70,13 +70,13 @@ const CreateSubcategory = ({ category }: { category: ICategory }) => {
       variant={"outlined"}
       onClick={() => setEditing(true)}
     >
-      Добавить подкатегорию
+      Добавить тему
     </Button>
   );
 };
 
 const DELETE_CATEGORY_TEXT =
-  "Вы уверены, что хотите удалить эту категорию? Удаление может привести к удалению подкатегорий и скрытию постов";
+  "Вы уверены, что хотите удалить этот раздел? Удаление может привести к удалению всех тем и контента";
 
 export function CategoryItem({
   category,
@@ -105,7 +105,7 @@ export function CategoryItem({
   const handleDelete = async () => {
     fetcher.submit(
       { goal: "delete-category", categoryId: category.id },
-      { method: "POST", encType: "application/json" },
+      { method: "POST", encType: "application/json" }
     );
   };
 
@@ -117,7 +117,7 @@ export function CategoryItem({
           categoryId: category.id,
           categoryUpdate: { name },
         },
-        { method: "POST", encType: "application/json" },
+        { method: "POST", encType: "application/json" }
       );
     }
     handleClose();
@@ -134,12 +134,15 @@ export function CategoryItem({
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
+          backgroundColor: "#FFFFFF",
+          borderRadius: "4px",
+          p: 2,
         }}
       >
         {isEditing ? (
           <TextField
             fullWidth
-            label={"Название категории"}
+            label={"Название раздела"}
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
@@ -174,13 +177,14 @@ export function CategoryItem({
         />
       </Box>
       <Stack ml={2}>
-        {category.subcategories && category.subcategories.map((subcategory) => (
-          <SubCategoryItem
-            subcategory={subcategory}
-            isEditingMode={isEditingMode}
-            key={subcategory.id}
-          />
-        ))}
+        {category.subcategories &&
+          category.subcategories.map((subcategory) => (
+            <SubCategoryItem
+              subcategory={subcategory}
+              isEditingMode={isEditingMode}
+              key={subcategory.id}
+            />
+          ))}
 
         {isEditingMode && <CreateSubcategory category={category} />}
       </Stack>

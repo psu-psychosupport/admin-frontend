@@ -8,7 +8,7 @@ import { LinkWrapper } from "~/components/LinkWrapper";
 import Indicator from "~/components/Indicator";
 
 const DELETE_SUBCATEGORY_TEXT =
-  "Вы уверены, что хотите удалить эту подкатегорию? Удаление может привести к скрытию поста";
+  "Вы уверены, что хотите удалить эту тему раздела? Удаление может привести к удалению контента!";
 
 export function SubCategoryItem({
   subcategory,
@@ -71,7 +71,7 @@ export function SubCategoryItem({
       {isEditing ? (
         <TextField
           fullWidth
-          label={"Название подкатегории"}
+          label={"Название темы раздела"}
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
