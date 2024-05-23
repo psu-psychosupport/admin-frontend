@@ -22,7 +22,7 @@ export const OptionsForm = ({ formik }: { formik: FormikProps<ITestForm> }) => {
             }}
           >
             <TextField
-              label={"Опция"}
+              label={"Вариант ответа"}
               value={formik.values.options![index]}
               onChange={(event) => {
                 const optionText = event.target.value;
@@ -50,7 +50,7 @@ export const OptionsForm = ({ formik }: { formik: FormikProps<ITestForm> }) => {
               </IconButton>
             )}
             <IconButton
-              aria-label={"Удалить опцию"}
+              aria-label={"Удалить вариант"}
               onClick={() => {
                 const options = formik.values.options!.filter(
                   (__, ind) => ind !== index
@@ -74,7 +74,7 @@ export const OptionsForm = ({ formik }: { formik: FormikProps<ITestForm> }) => {
           });
         }}
       >
-        Добавить опцию
+        Добавить вариант ответа
       </Button>
     </>
   );
