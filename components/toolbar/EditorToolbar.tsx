@@ -69,7 +69,7 @@ const EditorToolbar = () => {
                 <InsertImage />
                 <AudioButton />
                 <VideoButton />
-                <DiagramButton />
+                {/* <DiagramButton /> */}
                 <FileButton />
                 {/* <PdfButton /> */}
                 <InsertPresentation />
