@@ -5,7 +5,7 @@ import { Outlet } from "@remix-run/react";
 import Page from "../../components/Page";
 
 export const meta: MetaFunction = () => {
-  return [{ title: "Категории" }];
+  return [{ title: "Разделы" }];
 };
 
 export default function CategoriesLayout() {

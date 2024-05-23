@@ -5,6 +5,7 @@ import {
   PostAdd as PostAddIcon,
   Category as CategoryIcon,
   People as PeopleIcon,
+  QuestionMark as QuestionMarkIcon
 } from "@mui/icons-material";
 
 interface IRoute {
@@ -32,6 +33,12 @@ const routes: IRoute[] = [
     href: "/users/list",
     locale: "Пользователи",
     icon: <PeopleIcon />,
+  },
+  {
+    name: "guide",
+    href: "/guide",
+    locale: "Инструкции",
+    icon: <QuestionMarkIcon />,
   },
 ];
 

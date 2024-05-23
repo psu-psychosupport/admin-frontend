@@ -63,7 +63,7 @@ export default function ZModelTable<T extends object>({
         {showHeader && (
           <TableHeader route={headerRoute!} title={headerTitle!} />
         )}
-        <Table>
+        <Table sx={{backgroundColor: "#FFFFFF", borderRadius: "4px", p: 1}}>
           <TableHead>
             <TableRow>
               {columnTitles.map((column) => (

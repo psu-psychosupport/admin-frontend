@@ -48,7 +48,7 @@ const CreateSubcategory = ({ category }: { category: ICategory }) => {
 
   if (isEditing) {
     return (
-      <Stack direction={"row"}>
+      <Stack direction={"row"} mt={2} sx={{backgroundColor: "#FFFFFF", borderRadius: "4px", p: 1}}>
         <TextField
           fullWidth
           label={"Название темы"}
@@ -69,6 +69,7 @@ const CreateSubcategory = ({ category }: { category: ICategory }) => {
       startIcon={<AddIcon />}
       variant={"outlined"}
       onClick={() => setEditing(true)}
+      sx={{mt: 2}}
     >
       Добавить тему
     </Button>

@@ -135,6 +135,7 @@ export default function PostForm({
                   borderStyle: "solid",
                   borderRadius: 4,
                   width: "100%",
+                  backgroundColor: "#FFFFFF",
                 }}
               >
                 <Editor

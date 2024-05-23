@@ -96,12 +96,12 @@ export default function CategoriesAddRoute() {
   const [isEditingMode, setEditingMode] = useState(false);
 
   return (
-    <Container sx={{ width: "50vw" }} maxWidth={"lg"}>
+    <Container sx={{ width: "50vw", mb: 2 }} maxWidth={"lg"}>
       <Header
         isEditingMode={isEditingMode}
         onToggle={() => setEditingMode((prev) => !prev)}
       />
-      <Stack>
+      <Stack gap={2}>
         {categories.map((category) => (
           <CategoryItem
             category={category}

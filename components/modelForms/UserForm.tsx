@@ -65,7 +65,7 @@ const UserForm = ({ user }: { user?: IUser }) => {
       <Typography variant={"h4"} fontWeight={"800"} sx={{ marginBottom: 2 }}>
         {user ? "Редактирование" : "Создание"} пользователя
       </Typography>
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} style={{backgroundColor: "#FFFFFF", borderRadius: "4px", padding: 8}}>
         <Stack spacing={2}>
           <TextField
             name={"name"}

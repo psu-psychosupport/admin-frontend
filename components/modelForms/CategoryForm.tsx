@@ -72,7 +72,7 @@ const CategoryForm = () => {
         Создание раздела
       </Typography>
       <form onSubmit={formik.handleSubmit}>
-        <Stack spacing={2}>
+        <Stack spacing={2} sx={{backgroundColor: "#FFFFFF", borderRadius: "4px", p: 1}}>
           <TextField
             name={"name"}
             id={"name"}

@@ -18,11 +18,11 @@ export const SelectTestType = ({
     <FormControl>
       <FormLabel id="select-test-type">Тип теста</FormLabel>
       <RadioGroup row name="type" id={"type"} value={value} onChange={onChange}>
-        <FormControlLabel value={0} control={<Radio />} label="С опциями" />
+        <FormControlLabel value={0} control={<Radio />} label="С выбором варианта ответа" />
         <FormControlLabel
           value={1}
           control={<Radio />}
-          label="С вводом текста"
+          label="Открытая форма"
         />
       </RadioGroup>
     </FormControl>
