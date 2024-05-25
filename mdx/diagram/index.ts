@@ -1,1 +1,0 @@
-export { DiagramDirectiveDescriptor } from "./DiagramDescriptor";
