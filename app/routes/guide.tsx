@@ -1,41 +1,19 @@
-import React, { useEffect } from "react";
-import {
-  Typography,
-  Box,
-  List,
-  ListItem,
-  Stack,
-  Link,
-  Container,
-} from "@mui/material";
-
+import React from "react";
 import Page from "components/Page";
+import { Outlet } from "@remix-run/react";
+import { Container } from "@mui/material";
+import {MetaFunction} from "@remix-run/node";
+
+export const meta: MetaFunction = () => {
+  return [{ title: "Инструкции" }];
+};
+
 
 const GuideRoute = () => {
   return (
     <Page route={"guide"}>
-      <Container sx={{ width: "70vw" }}>
-        <Stack>
-          <Box sx={{ backgroundColor: "#FFFFFF", borderRadius: "4px", p: 1 }}>
-            <Typography variant="h4" fontWeight={"500"}>
-              Как добавить схему (диаграмму)?
-            </Typography>
-            <Typography fontSize={18}>
-              Добавление схемы возможно при помощи вставки изображения самой
-              схемы из различных ресурсов, которые предоставляют возможность
-              создавать их.
-            </Typography>
-            <Typography fontSize={18} fontWeight={"500"}>
-              Список ресурсов:
-            </Typography>
-
-            <List>
-              <ListItem>
-                <Link href="https://diagrams.net">Сайт diagrams.net</Link>
-              </ListItem>
-            </List>
-          </Box>
-        </Stack>
+      <Container sx={{ width: "50vw" }}>
+        <Outlet />
       </Container>
     </Page>
   );

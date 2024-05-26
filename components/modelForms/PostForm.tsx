@@ -3,7 +3,6 @@ import React, { ChangeEvent, useRef, useState } from "react";
 import { ClientOnly } from "remix-utils/client-only";
 import { Box, Button, colors, Stack, Typography } from "@mui/material";
 import { CloudUpload as CloudUploadIcon } from "@mui/icons-material";
-import Editor from "../../components/Editor";
 
 import { ICategory, IPost, ISubCategory } from "../../api/types/content";
 import { MDXEditorMethods } from "@mdxeditor/editor";
@@ -14,6 +13,7 @@ import { InputDocumentFile } from "./InputDocumentFile";
 import useFetcherAsync from "~/hooks/useFetcherAsync";
 import { IApiResponse } from "../../api/httpClient";
 import { useNavigate } from "@remix-run/react";
+import { MarkdownEditor } from "mdx-descriptors/src";
 
 export default function PostForm({
   category,
@@ -92,6 +92,19 @@ export default function PostForm({
     setModalOpened(false);
   };
 
+  const uploadImage = async (image: File) => {
+    const formData = new FormData();
+    formData.append("goal", "insert-image");
+    formData.append("file", image);
+
+    const data = await fetcher.submit(formData, {
+      method: "POST",
+      encType: "multipart/form-data",
+    });
+
+    return data!.url;
+  };
+
   return (
     <Stack sx={{ gap: 2, marginY: "5vh" }}>
       {(post || category || subcategory) && (
@@ -138,10 +151,11 @@ export default function PostForm({
                   backgroundColor: "#FFFFFF",
                 }}
               >
-                <Editor
+                <MarkdownEditor
                   ref={editorRef}
                   content={content}
                   onContentChange={setContent}
+                  onImageUpload={uploadImage}
                 />
               </Box>
             )}

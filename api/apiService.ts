@@ -10,6 +10,7 @@ import {
 } from "../components/modelForms/types";
 import { MediaTypes } from "./types/enums";
 import { IMedia } from "./types/content";
+import { IGuide, IGuideCreate, IGuideUpdate } from "./types/guide";
 
 class ApiService {
   private http: HttpClient;
@@ -149,7 +150,7 @@ class ApiService {
   async getMediaList<T>(type?: MediaTypes) {
     const res = await this.http.getMediaList<IMedia<T>[]>(type);
 
-    if (res.error || res.data!.length && res.data![0].file_url) return res;
+    if (res.error || (res.data!.length && res.data![0].file_url)) return res;
 
     res.data = res.data!.map((d) => {
       d.data = JSON.parse(d.data as string);
@@ -165,6 +166,26 @@ class ApiService {
 
   transformDocument(file: File) {
     return this.http.transformDocument(file);
+  }
+
+  getGuideList() {
+    return this.http.getGuideList();
+  }
+
+  getGuideById(id: number) {
+    return this.http.getGuideById(id);
+  }
+
+  addGuide(guide: IGuideCreate) {
+    return this.http.addGuide(guide);
+  }
+
+  updateGuide(id: number, guide: IGuideUpdate) {
+    return this.http.updateGuide(id, guide);
+  }
+
+  deleteGuide(id: number) {
+    return this.http.deleteGuide(id);
   }
 }
 

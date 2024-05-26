@@ -12,6 +12,7 @@ import {
 } from "../components/modelForms/types";
 import { ErrorResponseCodes, MediaTypes } from "./types/enums";
 import { getErrorMessage } from "../utils/texts";
+import { IGuide, IGuideCreate, IGuideUpdate } from "./types/guide";
 
 export const API_URL = "https://stoboi.damego.ru/api"; //"http://127.0.0.1:8000";
 
@@ -48,7 +49,7 @@ export default class HttpClient {
       data,
       file,
       asFormData,
-    }: { data?: object; file?: File; asFormData?: boolean } = {}
+    }: { data?: object; file?: File; asFormData?: boolean } = {},
   ): Promise<IApiResponse<T>> {
     let payload = undefined;
 
@@ -95,7 +96,7 @@ export default class HttpClient {
       };
 
       console.error(
-        `HTTP Error with code ${error.code}. Message: ${error.message}`
+        `HTTP Error with code ${error.code}. Message: ${error.message}`,
       );
       return { error };
     }
@@ -195,7 +196,8 @@ export default class HttpClient {
     return this.request<null>("DELETE", `/categories/${categoryId}`);
   }
 
-  getSubCategories() { // TODO: ? category not needed?
+  getSubCategories() {
+    // TODO: ? category not needed?
     return this.request<ISubCategory[]>("GET", "/subcategories");
   }
 
@@ -215,7 +217,7 @@ export default class HttpClient {
       `/subcategories/${subcategoryId}`,
       {
         data: categoryUpdate,
-      }
+      },
     );
   }
 
@@ -278,5 +280,25 @@ export default class HttpClient {
 
   transformDocument(file: File) {
     return this.request<string>("POST", `/transform`, { file });
+  }
+
+  getGuideList() {
+    return this.request<IGuide[]>("GET", "/guide/list");
+  }
+
+  getGuideById(id: number) {
+    return this.request<IGuide>("GET", `/guide/${id}`);
+  }
+
+  addGuide(guide: IGuideCreate) {
+    return this.request<null>("POST", "/guide", { data: guide });
+  }
+
+  updateGuide(id: number, guide: IGuideUpdate) {
+    return this.request<null>("PATCH", `/guide/${id}`, { data: guide });
+  }
+
+  deleteGuide(id: number) {
+    return this.request<null>("DELETE", `/guide/${id}`);
   }
 }
