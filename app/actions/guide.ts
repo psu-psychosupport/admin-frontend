@@ -26,6 +26,20 @@ const guideAction = async (request: Request) => {
     const res = await apiService.deleteGuide(payload.guideId);
     return json(res);
   }
+  if (goal === "insert-test") {
+    const res = await apiService.uploadMedia({ data: payload.test });
+    return json(res);
+  } else if (goal === "update-test") {
+    const res = await apiService.updateMedia(payload.mediaId, payload.test);
+    return json(res);
+  } else if (goal === "delete-test") {
+    const res = await apiService.deleteMedia(payload.MediaId);
+    return json(res);
+  }
+  if (goal === "get-media") {
+    const res = await apiService.getMedia(payload.mediaId);
+    return json(res);
+  }
 
   // Загрузка файлов
   // TODO: Может и не стоит такую дичь оставлять?

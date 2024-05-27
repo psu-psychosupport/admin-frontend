@@ -164,6 +164,10 @@ class ApiService {
     return this.http.updateMedia<T>(mediaId, data);
   }
 
+  deleteMedia(mediaId: number) {
+    return this.http.deleteMedia(mediaId);
+  }
+
   transformDocument(file: File) {
     return this.http.transformDocument(file);
   }

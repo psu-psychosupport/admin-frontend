@@ -22,10 +22,12 @@ export async function action({ request }: ActionFunctionArgs) {
 
   // idk why yup's "required" is fucked up
   if (!email || !password) {
-    return json({message: "Вы не ввели логин или пароль"})
+    return json({ message: "Вы не ввели логин или пароль" });
   }
 
-  const session = await sessionStorage.getSession(request.headers.get("cookie"));
+  const session = await sessionStorage.getSession(
+    request.headers.get("cookie"),
+  );
 
   const res = await apiService.signIn(email, password);
   if (res.error) return json(res.error);
@@ -57,8 +59,8 @@ export default function SignInRoute() {
   useEffect(() => {
     if (error) {
       toast.error(error.message);
-    } 
-  }, [error])
+    }
+  }, [error]);
 
   const formik = useFormik({
     initialValues: {
@@ -73,14 +75,22 @@ export default function SignInRoute() {
 
   return (
     <Container
-      sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "80vh"
+      }}
     >
       <Box sx={{ width: "30vw" }}>
         <Typography variant={"h4"} fontWeight={"800"} sx={{ marginBottom: 2 }}>
-          Вход в админ панель
+          Панель управления сайтом
         </Typography>
         <Form method={"POST"}>
-          <Stack spacing={2}>
+          <Stack
+            spacing={2}
+            sx={{ backgroundColor: "#FFFFFF", p: 1, borderRadius: "4px" }}
+          >
             <TextField
               name={"email"}
               id={"email"}

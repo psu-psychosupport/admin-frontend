@@ -14,8 +14,7 @@ import { ErrorResponseCodes, MediaTypes } from "./types/enums";
 import { getErrorMessage } from "../utils/texts";
 import { IGuide, IGuideCreate, IGuideUpdate } from "./types/guide";
 
-export const API_URL = "https://stoboi.damego.ru/api"; //"http://127.0.0.1:8000";
-
+export const API_URL = "http://127.0.0.1:8000";
 
 export interface IApiError {
   code: ErrorResponseCodes;
@@ -276,6 +275,10 @@ export default class HttpClient {
     return this.request<IMedia<T>>("PATCH", `/media/${mediaId}`, {
       data: { data },
     });
+  }
+
+  deleteMedia(mediaId: number) {
+    return this.request("DELETE", `/media/${mediaId}`);
   }
 
   transformDocument(file: File) {

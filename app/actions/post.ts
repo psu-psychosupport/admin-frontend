@@ -22,16 +22,29 @@ const postAction = async (request: Request) => {
     const post: IFormPost = payload.post;
     const res = await apiService.createPost(post);
     return json(res);
-  }
-  else if (goal === "edit-post") {
+  } else if (goal === "edit-post") {
     const $post = payload.post as IFormPost;
     const postId = payload.postId as number;
     const res = await apiService.updatePost(postId, $post);
     return json(res);
-  }
-  else if (goal === "convert-document") {
+  } else if (goal === "convert-document") {
     const file: File = payload.get("file");
     const res = await apiService.transformDocument(file);
+    return json(res);
+  }
+
+  if (goal === "insert-test") {
+    const res = await apiService.uploadMedia({ data: payload.test });
+    return json(res);
+  } else if (goal === "update-test") {
+    const res = await apiService.updateMedia(payload.mediaId, payload.test);
+    return json(res);
+  } else if (goal === "delete-test") {
+    const res = await apiService.deleteMedia(payload.MediaId);
+    return json(res);
+  }
+  if (goal === "get-media") {
+    const res = await apiService.getMedia(payload.mediaId);
     return json(res);
   }
 
