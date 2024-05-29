@@ -21,6 +21,7 @@ import { ToastContainer } from "react-toastify";
 import { sessionStorage } from "~/sessions";
 import { Box, Button, Typography } from "@mui/material";
 import "./styles/global.css";
+import Footer from "~/components/Footer";
 
 export const links: LinksFunction = () => [...getMuiLinks()];
 
@@ -64,12 +65,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <MuiMeta />
         <Links />
       </head>
-      <body>
+      <body
+        style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+      >
         <Header />
         {children}
         <ScrollRestoration />
         <Scripts />
         <ToastContainer position={"bottom-right"} />
+        <Footer />
       </body>
     </html>
   );
