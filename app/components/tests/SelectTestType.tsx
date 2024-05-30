@@ -6,6 +6,7 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material";
+import {TestTypes} from "../../../api/types/tests";
 
 export const SelectTestType = ({
   value,
@@ -16,11 +17,15 @@ export const SelectTestType = ({
 }) => {
   return (
     <FormControl>
-      <FormLabel id="select-test-type">Тип теста</FormLabel>
+      <FormLabel id="select-test-type">Тип вопроса</FormLabel>
       <RadioGroup row name="type" id={"type"} value={value} onChange={onChange}>
-        <FormControlLabel value={0} control={<Radio />} label="С выбором варианта ответа" />
         <FormControlLabel
-          value={1}
+          value={TestTypes.SINGLE_ANSWER_OPTION}
+          control={<Radio />}
+          label="С выбором варианта ответа"
+        />
+        <FormControlLabel
+          value={TestTypes.TEXT_FIELD}
           control={<Radio />}
           label="Открытая форма"
         />

@@ -11,7 +11,12 @@ import {
 
 import { getMuiLinks } from "./mui/getMuiLinks";
 import { MuiMeta } from "./mui/MuiMeta";
-import { LinksFunction, LoaderFunctionArgs, redirect, redirectDocument } from "@remix-run/node";
+import {
+  LinksFunction,
+  LoaderFunctionArgs,
+  redirect,
+  redirectDocument,
+} from "@remix-run/node";
 import { MuiDocument } from "./mui/MuiDocument";
 import React from "react";
 import Header from "./components/Header";
@@ -19,7 +24,7 @@ import { apiService } from "../api/apiService";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { sessionStorage } from "~/sessions";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, CssBaseline, Typography } from "@mui/material";
 import "./styles/global.css";
 import Footer from "~/components/Footer";
 
@@ -49,7 +54,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   if ((response.data?.permissions! & 1) !== 1) {
-    return redirectDocument("https://stoboi.damego.ru/") // TODO: FUCK IT
+    return redirectDocument("https://stoboi.damego.ru/"); // TODO: FUCK IT
   }
 
   return null;
@@ -104,14 +109,17 @@ export function ErrorBoundary() {
         );
       case 404:
         return (
-          <Box>
-            <Typography variant={"h2"}>
-              Похоже, что страница на которую вы зашли не существует
-            </Typography>
-            <Button variant={"outlined"} onClick={() => navigate("/")}>
-              Вернуться на главную
-            </Button>
-          </Box>
+          <>
+            <CssBaseline />
+            <Box>
+              <Typography variant={"h2"}>
+                Похоже, что страница на которую вы зашли не существует
+              </Typography>
+              <Button variant={"outlined"} onClick={() => navigate("/")}>
+                Вернуться на главную
+              </Button>
+            </Box>
+          </>
         );
     }
 

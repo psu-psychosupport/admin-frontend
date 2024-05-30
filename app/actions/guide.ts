@@ -1,30 +1,36 @@
-import parseFormData from "../../utils/parseFormData";
-import {apiService} from "../../api/apiService";
-import {json} from "@remix-run/node";
-import {MediaTypes} from "../../api/types/enums";
+import { apiService } from "../../api/apiService";
+import { json } from "@remix-run/node";
+import getPayload from "~/actions/utils/getPayload";
+import { MediaTypes } from "../../api/types/enums";
 
 const guideAction = async (request: Request) => {
-  let payload;
-  let goal: string;
-  if (
-    request.headers.get("Content-Type")!.split(";")[0] === "application/json"
-  ) {
-    payload = await request.json();
-    goal = payload.goal;
-  } else {
-    payload = await parseFormData(request);
-    goal = payload.get("goal") as string;
-  }
+  const { goal, ...payload } = await getPayload(request);
 
   if (goal === "add-guide") {
     const res = await apiService.addGuide(payload.guide);
     return json(res);
-  } else if (goal === "update-guide") {
+  }
+  if (goal === "update-guide") {
     const res = await apiService.updateGuide(payload.guideId, payload.guide);
     return json(res);
-  } else if (goal === "delete-guide") {
+  }
+  if (goal === "delete-guide") {
     const res = await apiService.deleteGuide(payload.guideId);
     return json(res);
+  }
+
+  if (goal === "get-media") {
+    const res = await apiService.getMedia(payload.mediaId);
+    return json(res);
+  }
+
+  if (goal === "get-tests") {
+    const res = await apiService.getTestList();
+    return json({ goal, ...res });
+  }
+  if (goal === "get-test") {
+    const res = await apiService.getTestById(payload.testId);
+    return json({ goal, ...res });
   }
 
   // Загрузка файлов
@@ -54,6 +60,6 @@ const guideAction = async (request: Request) => {
   }
 
   return null;
-}
+};
 
 export default guideAction;

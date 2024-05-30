@@ -2,7 +2,7 @@ import { Box, Stack, Typography, Container, colors } from "@mui/material";
 import { Link } from "@remix-run/react";
 import React from "react";
 import {
-  PostAdd as PostAddIcon,
+  Quiz as QuizIcon,
   Category as CategoryIcon,
   People as PeopleIcon,
   QuestionMark as QuestionMarkIcon
@@ -16,17 +16,17 @@ interface IRoute {
 }
 
 const routes: IRoute[] = [
-  // {
-  //   name: "posts",
-  //   href: "/posts/list",
-  //   locale: "Посты",
-  //   icon: <PostAddIcon />,
-  // },
   {
     name: "categories",
     href: "/categories/list",
     locale: "Разделы",
     icon: <CategoryIcon />,
+  },
+  {
+    name: "tests",
+    href: "/tests",
+    locale: "Тесты",
+    icon: <QuizIcon />,
   },
   {
     name: "users",
