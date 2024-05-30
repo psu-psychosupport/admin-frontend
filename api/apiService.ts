@@ -11,6 +11,7 @@ import {
 import { MediaTypes } from "./types/enums";
 import { IMedia } from "./types/content";
 import { IGuide, IGuideCreate, IGuideUpdate } from "./types/guide";
+import { ITest, TestCreate } from "./types/tests";
 
 class ApiService {
   private http: HttpClient;
@@ -144,7 +145,10 @@ class ApiService {
   }
 
   uploadMedia({ file, data }: { file?: File; data?: { [key: string]: any } }) {
-    return this.http.uploadMedia({ file, data });
+    return this.http.uploadMedia({
+      file,
+      data: { json_payload: JSON.stringify(data) },
+    });
   }
 
   async getMediaList<T>(type?: MediaTypes) {
@@ -190,6 +194,26 @@ class ApiService {
 
   deleteGuide(id: number) {
     return this.http.deleteGuide(id);
+  }
+
+  getTestList() {
+    return this.http.getTestList();
+  }
+
+  getTestById(testId: number) {
+    return this.http.getTestById(testId);
+  }
+
+  addTest(create: TestCreate) {
+    return this.http.addTest(create);
+  }
+
+  updateTest(testId: number, update: TestCreate) {
+    return this.http.updateTest(testId, update);
+  }
+
+  deleteTest(testId: number) {
+    return this.http.deleteTest(testId);
   }
 }
 

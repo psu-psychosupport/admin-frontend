@@ -13,6 +13,7 @@ import {
 import { ErrorResponseCodes, MediaTypes } from "./types/enums";
 import { getErrorMessage } from "../utils/texts";
 import { IGuide, IGuideCreate, IGuideUpdate } from "./types/guide";
+import { ITest, TestCreate } from "./types/tests";
 
 export const API_URL = "http://127.0.0.1:8000";
 
@@ -303,5 +304,25 @@ export default class HttpClient {
 
   deleteGuide(id: number) {
     return this.request<null>("DELETE", `/guide/${id}`);
+  }
+
+  getTestList() {
+    return this.request<ITest[]>("GET", "/tests/list");
+  }
+
+  getTestById(testId: number) {
+    return this.request<ITest>("GET", `/tests/${testId}`);
+  }
+
+  addTest(create: TestCreate) {
+    return this.request<ITest>("POST", "/tests", { data: create });
+  }
+
+  updateTest(testId: number, update: TestCreate) {
+    return this.request<ITest>("PATCH", `/tests/${testId}`, { data: update });
+  }
+
+  deleteTest(testId: number) {
+    return this.request<null>("DELETE", `/tests/${testId}`);
   }
 }

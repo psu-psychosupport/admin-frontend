@@ -1,9 +1,8 @@
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import parseFormData from "../../utils/parseFormData";
 import { IFormPost } from "../../components/modelForms/types";
 import { MediaTypes } from "api/types/enums";
 import { apiService } from "api/apiService";
-import { ISelectPost } from "components/modelForms/SelectCategory";
 
 const postAction = async (request: Request) => {
   let payload;
@@ -33,19 +32,17 @@ const postAction = async (request: Request) => {
     return json(res);
   }
 
-  if (goal === "insert-test") {
-    const res = await apiService.uploadMedia({ data: payload.test });
-    return json(res);
-  } else if (goal === "update-test") {
-    const res = await apiService.updateMedia(payload.mediaId, payload.test);
-    return json(res);
-  } else if (goal === "delete-test") {
-    const res = await apiService.deleteMedia(payload.MediaId);
-    return json(res);
-  }
   if (goal === "get-media") {
     const res = await apiService.getMedia(payload.mediaId);
-    return json(res);
+    return json({ goal: "get-media", ...res });
+  }
+  if (goal === "get-tests") {
+    const res = await apiService.getTestList();
+    return json({ goal, ...res });
+  }
+  if (goal === "get-test") {
+    const res = await apiService.getTestById(payload.testId);
+    return json({ goal, ...res });
   }
 
   // Загрузка файлов
