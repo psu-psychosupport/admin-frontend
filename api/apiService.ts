@@ -147,7 +147,7 @@ class ApiService {
   uploadMedia({ file, data }: { file?: File; data?: { [key: string]: any } }) {
     return this.http.uploadMedia({
       file,
-      data: { json_payload: JSON.stringify(data) },
+      data,
     });
   }
 
